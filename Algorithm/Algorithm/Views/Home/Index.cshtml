@@ -1,0 +1,63 @@
+﻿@model Algorithm.Models.Matrix
+
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+
+<form id="form">
+   N: <input type="text" id="n" value="5" size="5"/>
+   M: <input type="text" id="m" value="5" size="5"/>
+   <input type="submit" value="Post"/>
+</form>
+
+<table id='tableId'></table>
+<button id="matrix">Post</button>
+<input id="result" size="5"/>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#form").submit(function(event) {
+            event.preventDefault();
+            $.post('@Url.Action("InputMatrix", "Home")',
+                { 'rows': $('#n').val(), 'columns': $('#m').val() },
+                function(data) {
+
+                    $('#tableId').empty();
+
+                    var size = parseInt(data);
+
+                    var newTextBoxTr = $(document.createElement('tr')).attr("id", 'tableRowId1');
+
+                    for (var i = 1; i <= size * size; i++) {
+
+                        newTextBoxTr.append('<input type="text" name="textbox' + i +
+                            '" id="textbox' + i + '" value="' + i + '" size="5" >');
+
+                        if (i % size === 0) {
+
+                            newTextBoxTr.appendTo($('#tableId'));
+
+                            newTextBoxTr = $(document.createElement('tr')).attr("id", 'tableRowId' + i / size);
+                        }
+                    }
+                });
+        });
+    });
+
+    $("#matrix").click(function() {
+        var array = [];
+
+        $('[id^=textbox]').each(function() {
+            var val = $(this).val();
+            array.push(val);
+        });
+
+        $.ajax({type: "POST",
+                url: '@Url.Action("ProcessMatrix", "Home")',
+                dataType: "json",
+                traditional: true,
+                data: { 'array': array },
+                success: function(data) {
+                            $('#result').val(data);
+                         }
+                });
+    });
+</script>
