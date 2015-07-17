@@ -3,39 +3,73 @@
 <script src="~/Scripts/jquery-1.8.2.min.js"></script>
 
 <form id="form">
-   N: <input type="text" id="n" value="5" size="5"/>
-   M: <input type="text" id="m" value="5" size="5"/>
-   <input type="submit" value="Post"/>
+    Pheromone Increment: <input type="text" id="pherInc" value="1" size="5"/><br/>
+    Extra Pheromone Increment: <input type="text" id="extPherInc" value="2" size="5"/><br/>
+    Number of Ants: <input type="text" id="nAnts" value="4" size="5"/><br/>
+    No Updates Limit: <input type="text" id="noUpdLim" value="50" size="5"/><br/>
+    Number of Iterations: <input type="text" id="nIter" value="100" size="5"/><br/>
+<input type="submit" value="Set"/>
 </form>
-
-<table id='tableId'></table>
-<button id="matrix">Post</button>
-<input id="result" size="5"/>
-
+    
+<table id='table1'></table>
+<table id='table2'></table>
+<textarea style="position: absolute; margin: 20px 0 200px 0" cols="30" rows="20"></textarea>
+<button id="matrix">Process</button>
 <script type="text/javascript">
+    
     $(document).ready(function() {
         $("#form").submit(function(event) {
             event.preventDefault();
             $.post('@Url.Action("InputMatrix", "Home")',
-                { 'rows': $('#n').val(), 'columns': $('#m').val() },
+                {
+                    'pherInc': $('#pherInc').val(),
+                    'extPherInc': $('#extPherInc').val(),
+                    'nAnts': $('#nAnts').val(),
+                    'noUpdLim': $('#noUpdLim').val(),
+                    'nIter': $('#nIter').val()
+                },
                 function(data) {
 
-                    $('#tableId').empty();
+                    $('#table1').empty();
+                    $('#table2').empty();
+                    $('#table1').append('<thead><tr><td>Distances</td></tr></thead>');
+                    $('#table2').append('<thead><tr><td>Flows</td></tr></thead>');
 
-                    var size = parseInt(data);
+                    var arr = [];
+                    var dist = [];
+                    var flow = [];
 
-                    var newTextBoxTr = $(document.createElement('tr')).attr("id", 'tableRowId1');
+                    arr = data.toString().split(' ');
 
-                    for (var i = 1; i <= size * size; i++) {
+                    var size = parseInt(arr[0]);
 
-                        newTextBoxTr.append('<input type="text" name="textbox' + i +
-                            '" id="textbox' + i + '" value="' + i + '" size="5" >');
+                    dist = arr[1].toString().split(',');
+                    flow = arr[2].toString().split(',');
 
-                        if (i % size === 0) {
+                    var textBoxTrDist = $(document.createElement('tr')).attr("id", 'tableRowDistId1');
+                    var textBoxTrFlow = $(document.createElement('tr')).attr("id", 'tableRowFlowId1');
 
-                            newTextBoxTr.appendTo($('#tableId'));
+                    var i;
+                    for (i = 0; i <= size * size; i++) {
 
-                            newTextBoxTr = $(document.createElement('tr')).attr("id", 'tableRowId' + i / size);
+                        textBoxTrDist.append('<input type="text" name="textbox' + i +
+                            '" id="textboxDistId' + i + '" value="' + dist[i] + '" size="5" >');
+                        
+                        if ((i+1) % size === 0) {
+
+                           textBoxTrDist.appendTo($('#table1'));
+                           textBoxTrDist = $(document.createElement('tr')).attr("id", 'tableRowDistId' + i / size);
+                         }
+                    }
+                    for (i = 0; i <= size * size; i++) {
+
+                        textBoxTrFlow.append('<input type="text" name="textbox' + i +
+                            '" id="textboxFlowId' + i + '" value="' + flow[i] + '" size="5" >');
+
+                        if ((i+1) % size === 0) {
+
+                           textBoxTrFlow.appendTo($('#table2'));
+                           textBoxTrFlow = $(document.createElement('tr')).attr("id", 'tableRowFlowId' + i / size);
                         }
                     }
                 });
@@ -45,19 +79,27 @@
     $("#matrix").click(function() {
         var array = [];
 
-        $('[id^=textbox]').each(function() {
+        $('[id^=textboxDistId]').each(function() {
+            var val = $(this).val();
+            array.push(val);
+        });
+        $('[id^=textboxFlowId]').each(function () {
             var val = $(this).val();
             array.push(val);
         });
 
-        $.ajax({type: "POST",
-                url: '@Url.Action("ProcessMatrix", "Home")',
-                dataType: "json",
-                traditional: true,
-                data: { 'array': array },
-                success: function(data) {
-                            $('#result').val(data);
-                         }
-                });
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ProcessMatrix", "Home")',
+            traditional: true,
+            data: { 'array': array },
+            success: function (data) {
+                $('textArea').text(data);
+            },
+            error: function(data) {
+                alert(data);
+            }
+        });
     });
+        
 </script>

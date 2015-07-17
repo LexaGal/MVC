@@ -19,50 +19,72 @@ namespace Algorithm.Controllers
         }
 
         [HttpPost]
-        public JsonResult InputMatrix(string rows, string columns)
+        public HtmlString InputMatrix(string pherInc, string extPherInc, string nAnts, string nIter, string noUpdLim)
         {
-            int n = 0;
-            int m = 0;
+            int pheromInc;
+            int extraPheromInc;
+            int numAnts;
+            int noUpdatesLim;
+            int numIter;
             try
             {
-                n = Convert.ToInt32(rows);
-                m = Convert.ToInt32(columns);
+                pheromInc = Convert.ToInt32(pherInc);
+                extraPheromInc = Convert.ToInt32(extPherInc);
+                numAnts = Convert.ToInt32(nAnts);
+                noUpdatesLim = Convert.ToInt32(noUpdLim);
+                numIter = Convert.ToInt32(nIter);
             }
             catch (FormatException)
             {
-                Response.Write("Ups!");
+                return new HtmlString(null);
             }
-            if (n != m)
-            {
-                return Json(null);
-            }
-            Matrix matrix = new Matrix(n, m);
+
+            Matrix matrix = new Matrix(numAnts, numAnts);
             Session["matrix"] = matrix;
-            return Json(n);            
+
+            AlgorithmCreator creator = new AlgorithmCreator(new FileStream(@"B:\Graph.txt", FileMode.Open));
+            IAlgorithm algorithm = creator.CreateStandartAlgorithm();
+            
+            ((Graph) algorithm.Graph).Info = new Tuple<int, int, int, int, int>(pheromInc,
+                extraPheromInc, numAnts, noUpdatesLim, numIter);
+            
+            Session["algorithm"] = algorithm;
+            
+            StringBuilder builder = new StringBuilder().AppendFormat("{0} ", numAnts);
+            for (int i = 0; i < numAnts; i++)
+            {
+                for (int j = 0; j < numAnts; j++)
+                {
+                    var elem = ((Graph) algorithm.Graph).DistanceMatrix[i, j];
+                    builder.AppendFormat("{0},", elem);
+                }
+            }
+            builder.Append(" ");
+            for (int i = 0; i < numAnts; i++)
+            {
+                for (int j = 0; j < numAnts; j++)
+                {
+                    var elem = ((Graph) algorithm.Graph).FlowMatrix[i, j];
+                    builder.AppendFormat("{0},", elem);
+                }
+            }
+            return new HtmlString(builder.ToString());            
         }
 
         [HttpPost]
-        public JsonResult ProcessMatrix(string[] array)
+        public HtmlString ProcessMatrix(string[] array)
         {
             List<int> ints = new List<int>();
             array.ToList().ForEach(s => ints.Add(Convert.ToInt32(s)));
-            ((Matrix) Session["matrix"]).Graph = ints;
-            int sum = ints.Sum();
-
-            AlgorithmCreator standartCreator = new AlgorithmCreator(new FileStream(@"B:\Graph.txt", FileMode.Open));
-
-            IAlgorithm standartAlgorithm = standartCreator.CreateStandartAlgorithm();
-
-            standartAlgorithm.Run();
-
-            StreamWriter writer = new StreamWriter(@"B:\Result.txt");
-            ((StandartAntAlgorithm)standartAlgorithm).Result.CopyTo(writer.BaseStream);
-
-            writer.Write(true);
-            ((StandartAntAlgorithm)standartAlgorithm).Result.Close();
-            writer.Close();
-
-            return Json(new StreamReader(((StandartAntAlgorithm)standartAlgorithm).Result).ReadToEnd());
+            List<List<int>> lists = ints
+                .Select((x, i) => new {Index = i, Value = x})
+                .GroupBy(x => x.Index/(ints.Count/2))
+                .Select(x => x.Select(v => v.Value).ToList())
+                .ToList();
+            StandartAntAlgorithm algorithm = (StandartAntAlgorithm) Session["algorithm"];
+            algorithm.Run();
+            string result = algorithm.ResultBuilder.ToString();
+            return new HtmlString(result);
         }
     }
 }

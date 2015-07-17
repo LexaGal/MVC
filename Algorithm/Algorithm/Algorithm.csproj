@@ -229,7 +229,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AntsLibrary\AntsLibrary\AntsLibrary.csproj">
+    <ProjectReference Include="..\..\..\..\AntsLibrary\AntsLibrary\AntsLibrary.csproj">
       <Project>{0d208af8-cadb-4e30-9988-4ca63e4e1299}</Project>
       <Name>AntsLibrary</Name>
     </ProjectReference>
