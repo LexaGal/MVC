@@ -10,15 +10,13 @@ namespace Algorithm.Models
         public List<int> DistGraph { get; set; }
         public List<int> FlowGraph { get; set; }
         public int N { get; set; }
-        public int M { get; set; }
 
         public Matrix()
         {}
 
-        public Matrix(int n, int m)
+        public Matrix(int n)
         {
             N = n;
-            M = m;
             DistGraph = new List<int>();
             FlowGraph = new List<int>();
         }

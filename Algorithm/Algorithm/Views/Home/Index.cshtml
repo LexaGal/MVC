@@ -2,19 +2,20 @@
 
 <script src="~/Scripts/jquery-1.8.2.min.js"></script>
 
+<textarea style="position: absolute; margin: 20px 0 0 700px" cols="30" rows="20"></textarea>
+
 <form id="form">
     Pheromone Increment: <input type="text" id="pherInc" value="1" size="5"/><br/>
     Extra Pheromone Increment: <input type="text" id="extPherInc" value="2" size="5"/><br/>
     Number of Ants: <input type="text" id="nAnts" value="4" size="5"/><br/>
     No Updates Limit: <input type="text" id="noUpdLim" value="50" size="5"/><br/>
     Number of Iterations: <input type="text" id="nIter" value="100" size="5"/><br/>
-<input type="submit" value="Set"/>
+    <input type="submit" value="Input"/>
 </form>
+<button id="matrix">Process</button>
     
 <table id='table1'></table>
 <table id='table2'></table>
-<textarea style="position: absolute; margin: 20px 0 200px 0" cols="30" rows="20"></textarea>
-<button id="matrix">Process</button>
 <script type="text/javascript">
     
     $(document).ready(function() {
@@ -40,7 +41,9 @@
                     var flow = [];
 
                     arr = data.toString().split(' ');
-
+                    if (arr.length !== 3) {
+                        alert(data);
+                    }
                     var size = parseInt(arr[0]);
 
                     dist = arr[1].toString().split(',');
@@ -57,9 +60,9 @@
                         
                         if ((i+1) % size === 0) {
 
-                           textBoxTrDist.appendTo($('#table1'));
-                           textBoxTrDist = $(document.createElement('tr')).attr("id", 'tableRowDistId' + i / size);
-                         }
+                            textBoxTrDist.appendTo($('#table1'));
+                            textBoxTrDist = $(document.createElement('tr')).attr("id", 'tableRowDistId' + i / size);
+                            }
                     }
                     for (i = 0; i <= size * size; i++) {
 
@@ -68,11 +71,13 @@
 
                         if ((i+1) % size === 0) {
 
-                           textBoxTrFlow.appendTo($('#table2'));
-                           textBoxTrFlow = $(document.createElement('tr')).attr("id", 'tableRowFlowId' + i / size);
+                            textBoxTrFlow.appendTo($('#table2'));
+                            textBoxTrFlow = $(document.createElement('tr')).attr("id", 'tableRowFlowId' + i / size);
                         }
                     }
+                  
                 });
+
         });
     });
 
