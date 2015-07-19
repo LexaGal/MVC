@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Algorithm.Models;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
@@ -16,7 +17,7 @@ namespace Algorithm.Controllers
     {
         public ActionResult Index()
         {
-            return View(new Matrix());
+            return View();
         }
 
         public List<List<int>> SplitList(List<int> ints, int number)
@@ -73,8 +74,12 @@ namespace Algorithm.Controllers
         }
 
         [HttpPost]
-        public HtmlString InputMatrix(string pherInc, string extPherInc, string nAnts, string nIter, string noUpdLim)
+        public HtmlString InputMatrix(string json)
         {
+            //using (var reader = new StreamReader(Request.InputStream)){ json = reader.ReadToEnd(); }
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            InputData input = jss.Deserialize<InputData>(json);
+    
             int pheromInc;
             int extraPheromInc;
             int numAnts;
@@ -82,19 +87,16 @@ namespace Algorithm.Controllers
             int numIter;
             try
             {
-                pheromInc = Convert.ToInt32(pherInc);
-                extraPheromInc = Convert.ToInt32(extPherInc);
-                numAnts = Convert.ToInt32(nAnts);
-                noUpdatesLim = Convert.ToInt32(noUpdLim);
-                numIter = Convert.ToInt32(nIter);
+                pheromInc = Convert.ToInt32(input.PheromoneIncrement);
+                extraPheromInc = Convert.ToInt32(input.ExtraPheromoneIncrement);
+                numAnts = Convert.ToInt32(input.AntsNumber);
+                noUpdatesLim = Convert.ToInt32(input.NoUpdatesLimit);
+                numIter = Convert.ToInt32(input.IterationsNumber);
             }
             catch (FormatException e)
             {
                 return new HtmlString(e.Message);
             }
-
-            Matrix matrix = new Matrix(numAnts);
-            Session["matrix"] = matrix;
             
             Graph graph = new Graph
             {
@@ -106,9 +108,7 @@ namespace Algorithm.Controllers
 
             AlgorithmCreator creator = new AlgorithmCreator(new FileStream(
                 ConfigurationManager.AppSettings["Graphs"], FileMode.Open));
-
             IAlgorithm algorithm = creator.CreateStandartAlgorithm();
-            
             Session["algorithm"] = algorithm;
             
             return new HtmlString(JoinIntoString(numAnts, algorithm));            
@@ -135,13 +135,17 @@ namespace Algorithm.Controllers
             
             StandartAntAlgorithm algorithm = (StandartAntAlgorithm) Session["algorithm"];
             algorithm.Graph = (Graph) Session["graph"];
-            int n = ((Matrix) Session["matrix"]).N;
-            SetGraphMatrices(algorithm, lists, n, algorithm.Pheromone);
+
+            int nAnts = algorithm.Graph.Nodes.Count;
+            SetGraphMatrices(algorithm, lists, nAnts, algorithm.Pheromone);
+            
             algorithm.CurrentIteration = 0;
             algorithm.CurrentIterationNoChanges = 0;
             algorithm.BestAnt = new Ant {PathCost = int.MaxValue, VisitedNodes = algorithm.Graph.Nodes};
+            
             algorithm.Run();
             string result = algorithm.ResultBuilder.ToString();
+            
             return new HtmlString(result);
         }
     }

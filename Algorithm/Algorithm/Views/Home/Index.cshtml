@@ -1,6 +1,5 @@
-﻿@model Algorithm.Models.Matrix
-
-<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+﻿<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<script src="~/Scripts/Custom/Functions.js"></script>
 
 <textarea style="position: absolute; margin: 20px 0 0 700px" cols="30" rows="20"></textarea>
 
@@ -17,88 +16,38 @@
 <table id='table1'></table>
 <table id='table2'></table>
 <script type="text/javascript">
-    
+
     $(document).ready(function() {
         $("#form").submit(function(event) {
-            event.preventDefault();
-            $.post('@Url.Action("InputMatrix", "Home")',
-                {
-                    'pherInc': $('#pherInc').val(),
-                    'extPherInc': $('#extPherInc').val(),
-                    'nAnts': $('#nAnts').val(),
-                    'noUpdLim': $('#noUpdLim').val(),
-                    'nIter': $('#nIter').val()
-                },
+                event.preventDefault();
+
+                var input = {
+                    PheromoneIncrement: $('#pherInc').val(),
+                    ExtraPheromoneIncrement: $('#extPherInc').val(),
+                    AntsNumber: $('#nAnts').val(),
+                    NoUpdatesLimit: $('#noUpdLim').val(),
+                    IterationsNumber: $('#nIter').val()
+                };
+
+                $.post('@Url.Action("InputMatrix", "Home")',
+                { json: JSON.stringify(input) },
                 function(data) {
-
-                    $('#table1').empty();
-                    $('#table2').empty();
-                    $('#table1').append('<thead><tr><td>Distances</td></tr></thead>');
-                    $('#table2').append('<thead><tr><td>Flows</td></tr></thead>');
-
-                    var arr = [];
-                    var dist = [];
-                    var flow = [];
-
-                    arr = data.toString().split(' ');
-                    if (arr.length !== 3) {
-                        alert(data);
-                    }
-                    var size = parseInt(arr[0]);
-
-                    dist = arr[1].toString().split(',');
-                    flow = arr[2].toString().split(',');
-
-                    var textBoxTrDist = $(document.createElement('tr')).attr("id", 'tableRowDistId1');
-                    var textBoxTrFlow = $(document.createElement('tr')).attr("id", 'tableRowFlowId1');
-
-                    var i;
-                    for (i = 0; i <= size * size; i++) {
-
-                        textBoxTrDist.append('<input type="text" name="textbox' + i +
-                            '" id="textboxDistId' + i + '" value="' + dist[i] + '" size="5" >');
-                        
-                        if ((i+1) % size === 0) {
-
-                            textBoxTrDist.appendTo($('#table1'));
-                            textBoxTrDist = $(document.createElement('tr')).attr("id", 'tableRowDistId' + i / size);
-                            }
-                    }
-                    for (i = 0; i <= size * size; i++) {
-
-                        textBoxTrFlow.append('<input type="text" name="textbox' + i +
-                            '" id="textboxFlowId' + i + '" value="' + flow[i] + '" size="5" >');
-
-                        if ((i+1) % size === 0) {
-
-                            textBoxTrFlow.appendTo($('#table2'));
-                            textBoxTrFlow = $(document.createElement('tr')).attr("id", 'tableRowFlowId' + i / size);
-                        }
-                    }
-                  
-                });
-
+                    createMatrices(data);
+                }
+            );
         });
     });
 
+
     $("#matrix").click(function() {
-        var array = [];
-
-        $('[id^=textboxDistId]').each(function() {
-            var val = $(this).val();
-            array.push(val);
-        });
-        $('[id^=textboxFlowId]').each(function () {
-            var val = $(this).val();
-            array.push(val);
-        });
-
+        var array = createArray();
+        
         $.ajax({
             type: "POST",
             url: '@Url.Action("ProcessMatrix", "Home")',
             traditional: true,
             data: { 'array': array },
-            success: function (data) {
+            success: function(data) {
                 $('textArea').text(data);
             },
             error: function(data) {
@@ -106,5 +55,5 @@
             }
         });
     });
-        
 </script>
+
