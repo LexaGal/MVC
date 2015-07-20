@@ -7,10 +7,10 @@ namespace Algorithm.Models
 {
     public class InputData
     {
-        public string PheromoneIncrement;
-        public string ExtraPheromoneIncrement;
-        public string AntsNumber;
-        public string NoUpdatesLimit;
-        public string IterationsNumber;
+        public string PheromoneIncrement { get; set; }
+        public string ExtraPheromoneIncrement { get; set; }
+        public string AntsNumber { get; set; }
+        public string NoUpdatesLimit { get; set; }
+        public string IterationsNumber { get; set; }
     }
 }

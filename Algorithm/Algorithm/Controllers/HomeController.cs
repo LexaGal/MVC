@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using Algorithm.Models;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
@@ -17,7 +16,7 @@ namespace Algorithm.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            return View(new InputData());
         }
 
         public List<List<int>> SplitList(List<int> ints, int number)
@@ -74,12 +73,22 @@ namespace Algorithm.Controllers
         }
 
         [HttpPost]
-        public HtmlString InputMatrix(string json)
+        public ActionResult Index(HttpPostedFileBase file)
         {
-            //using (var reader = new StreamReader(Request.InputStream)){ json = reader.ReadToEnd(); }
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            InputData input = jss.Deserialize<InputData>(json);
-    
+            if (file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+                if (fileName != null)
+                {
+                    StreamReader reader = new StreamReader(file.InputStream);
+                }
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public HtmlString InputMatrix(InputData model)
+        {  
             int pheromInc;
             int extraPheromInc;
             int numAnts;
@@ -87,11 +96,11 @@ namespace Algorithm.Controllers
             int numIter;
             try
             {
-                pheromInc = Convert.ToInt32(input.PheromoneIncrement);
-                extraPheromInc = Convert.ToInt32(input.ExtraPheromoneIncrement);
-                numAnts = Convert.ToInt32(input.AntsNumber);
-                noUpdatesLim = Convert.ToInt32(input.NoUpdatesLimit);
-                numIter = Convert.ToInt32(input.IterationsNumber);
+                pheromInc = Convert.ToInt32(model.PheromoneIncrement);
+                extraPheromInc = Convert.ToInt32(model.ExtraPheromoneIncrement);
+                numAnts = Convert.ToInt32(model.AntsNumber);
+                noUpdatesLim = Convert.ToInt32(model.NoUpdatesLimit);
+                numIter = Convert.ToInt32(model.IterationsNumber);
             }
             catch (FormatException e)
             {

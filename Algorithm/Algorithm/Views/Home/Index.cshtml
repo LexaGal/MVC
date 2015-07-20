@@ -1,40 +1,57 @@
-﻿<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+﻿@model Algorithm.Models.InputData
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
 <script src="~/Scripts/Custom/Functions.js"></script>
 
-<textarea style="position: absolute; margin: 20px 0 0 700px" cols="30" rows="20"></textarea>
+@using (Html.BeginForm("InputMatrix", "Home", FormMethod.Post, new {id = "form"}))
+{
+    <div>
+        @Html.LabelFor(m => m.PheromoneIncrement)
+        @Html.TextBoxFor(m => m.PheromoneIncrement)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.ExtraPheromoneIncrement)
+        @Html.TextBoxFor(m => m.ExtraPheromoneIncrement)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.AntsNumber)
+        @Html.TextBoxFor(m => m.AntsNumber)
+    </div>
+        @Html.LabelFor(m => m.NoUpdatesLimit)
+        @Html.TextBoxFor(m => m.NoUpdatesLimit)
+    <div>
+        @Html.LabelFor(m => m.IterationsNumber)
+        @Html.TextBoxFor(m => m.IterationsNumber)
+    </div>
+    <input id="post" type="button" value="Input"/>
+}
 
-<form id="form">
-    Pheromone Increment: <input type="text" id="pherInc" value="1" size="5"/><br/>
-    Extra Pheromone Increment: <input type="text" id="extPherInc" value="2" size="5"/><br/>
-    Number of Ants: <input type="text" id="nAnts" value="4" size="5"/><br/>
-    No Updates Limit: <input type="text" id="noUpdLim" value="50" size="5"/><br/>
-    Number of Iterations: <input type="text" id="nIter" value="100" size="5"/><br/>
-    <input type="submit" value="Input"/>
+<form method="post" enctype="multipart/form-data">
+
+  <label for="file">Filename:</label>
+  <input type="file" name="file" id="file" />
+
+  <input type="submit" />
 </form>
-<button id="matrix">Process</button>
-    
+
+
+<textarea style="position: absolute; margin: 20px 0 0 700px" cols="30" rows="20"></textarea>
+<button id="matrix">Process</button>   
 <table id='table1'></table>
 <table id='table2'></table>
+
 <script type="text/javascript">
 
     $(document).ready(function() {
-        $("#form").submit(function(event) {
-                event.preventDefault();
+        $('#post').click(function(event) {
+            event.preventDefault();
 
-                var input = {
-                    PheromoneIncrement: $('#pherInc').val(),
-                    ExtraPheromoneIncrement: $('#extPherInc').val(),
-                    AntsNumber: $('#nAnts').val(),
-                    NoUpdatesLimit: $('#noUpdLim').val(),
-                    IterationsNumber: $('#nIter').val()
-                };
-
-                $.post('@Url.Action("InputMatrix", "Home")',
-                { json: JSON.stringify(input) },
-                function(data) {
-                    createMatrices(data);
-                }
-            );
+            $.ajax({
+                url: $('#form').attr('action'),
+                type: $('#form').attr('method'),
+                data: $('#form').serialize(),
+                success: function(data) {
+                        createMatrices(data);
+                    }});
         });
     });
 

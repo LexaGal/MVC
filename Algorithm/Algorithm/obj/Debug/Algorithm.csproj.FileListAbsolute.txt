@@ -53,3 +53,9 @@ C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\System.Web.Razor.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\System.Web.WebPages.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\System.Web.WebPages.Deployment.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\System.Web.WebPages.Razor.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.Configuration.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.RegistrationByConvention.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.Configuration.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.RegistrationByConvention.xml
