@@ -2,37 +2,35 @@
 <script src="~/Scripts/jquery-1.8.2.min.js"></script>
 <script src="~/Scripts/Custom/Functions.js"></script>
 
+<form action="@Url.Action("LoadFile", "Home")" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" id="file"/>
+    <input type="submit"/>
+</form>
+
 @using (Html.BeginForm("InputMatrix", "Home", FormMethod.Post, new {id = "form"}))
 {
+    Html.AntiForgeryToken();
+    Html.ValidationSummary();        
     <div>
         @Html.LabelFor(m => m.PheromoneIncrement)
-        @Html.TextBoxFor(m => m.PheromoneIncrement)
+        @Html.TextBoxFor(m => m.PheromoneIncrement, new {value = "1"})
     </div>
     <div>
         @Html.LabelFor(m => m.ExtraPheromoneIncrement)
-        @Html.TextBoxFor(m => m.ExtraPheromoneIncrement)
+        @Html.TextBoxFor(m => m.ExtraPheromoneIncrement, new {value = "2"})
     </div>
     <div>
         @Html.LabelFor(m => m.AntsNumber)
-        @Html.TextBoxFor(m => m.AntsNumber)
+        @Html.TextBoxFor(m => m.AntsNumber, new {value = "8"})
     </div>
         @Html.LabelFor(m => m.NoUpdatesLimit)
-        @Html.TextBoxFor(m => m.NoUpdatesLimit)
+        @Html.TextBoxFor(m => m.NoUpdatesLimit, new {value = "50"})
     <div>
         @Html.LabelFor(m => m.IterationsNumber)
-        @Html.TextBoxFor(m => m.IterationsNumber)
+        @Html.TextBoxFor(m => m.IterationsNumber, new {value = "100"})
     </div>
-    <input id="post" type="button" value="Input"/>
+    <input id="postForm" type="button" value="Input"/>
 }
-
-<form method="post" enctype="multipart/form-data">
-
-  <label for="file">Filename:</label>
-  <input type="file" name="file" id="file" />
-
-  <input type="submit" />
-</form>
-
 
 <textarea style="position: absolute; margin: 20px 0 0 700px" cols="30" rows="20"></textarea>
 <button id="matrix">Process</button>   
@@ -42,7 +40,7 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
-        $('#post').click(function(event) {
+        $('#postForm').click(function(event) {
             event.preventDefault();
 
             $.ajax({
@@ -50,20 +48,26 @@
                 type: $('#form').attr('method'),
                 data: $('#form').serialize(),
                 success: function(data) {
-                        createMatrices(data);
-                    }});
+                    createMatrices(data);
+                }
+            });
         });
     });
 
 
     $("#matrix").click(function() {
-        var array = createArray();
-        
+        var distArray = createArray('Dist');
+        var flowArray = createArray('Flow');
+        var matrix = {
+            DistGraph: distArray,
+            FlowGraph: flowArray
+        }
+
         $.ajax({
             type: "POST",
             url: '@Url.Action("ProcessMatrix", "Home")',
             traditional: true,
-            data: { 'array': array },
+            data: matrix,
             success: function(data) {
                 $('textArea').text(data);
             },

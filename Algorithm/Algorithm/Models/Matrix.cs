@@ -7,8 +7,8 @@ namespace Algorithm.Models
 {
     public class Matrix
     {
-        public List<int> DistGraph { get; set; }
-        public List<int> FlowGraph { get; set; }
+        public int[] DistGraph { get; set; }
+        public int[] FlowGraph { get; set; }
         public int N { get; set; }
 
         public Matrix()
@@ -17,8 +17,8 @@ namespace Algorithm.Models
         public Matrix(int n)
         {
             N = n;
-            DistGraph = new List<int>();
-            FlowGraph = new List<int>();
+            DistGraph = new int[n];
+            FlowGraph = new int[n];
         }
     }
 }

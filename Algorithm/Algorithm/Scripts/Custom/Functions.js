@@ -4,19 +4,12 @@
     $('#table1').append('<thead><tr><td>Distances</td></tr></thead>');
     $('#table2').append('<thead><tr><td>Flows</td></tr></thead>');
 
-    var arr = [];
     var dist = [];
     var flow = [];
-
-    arr = data.toString().split(' ');
-    if (arr.length !== 3) {
-        alert(data);
-    }
-    var size = parseInt(arr[0]);
-
-    dist = arr[1].toString().split(',');
-    flow = arr[2].toString().split(',');
-
+    var size = data.N;
+    dist = data.DistGraph;
+    flow = data.FlowGraph;
+    
     var textBoxTrDist = $(document.createElement('tr')).attr("id", 'tableRowDistId1');
     var textBoxTrFlow = $(document.createElement('tr')).attr("id", 'tableRowFlowId1');
 
@@ -45,14 +38,10 @@
     }
 }
 
-function createArray() {
+function createArray(type) {
     var array = [];
 
-    $('[id^=textboxDistId]').each(function () {
-        var val = $(this).val();
-        array.push(val);
-    });
-    $('[id^=textboxFlowId]').each(function () {
+    $('[id^=textbox' + type + 'Id]').each(function () {
         var val = $(this).val();
         array.push(val);
     });

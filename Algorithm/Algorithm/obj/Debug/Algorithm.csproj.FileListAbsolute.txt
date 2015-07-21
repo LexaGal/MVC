@@ -59,3 +59,9 @@ C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.U
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.Configuration.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.RegistrationByConvention.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.ServiceLocation.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.Mvc.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\WebActivatorEx.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.ServiceLocation.pdb
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.ServiceLocation.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.Mvc.xml

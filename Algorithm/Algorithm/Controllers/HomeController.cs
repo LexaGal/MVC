@@ -9,17 +9,21 @@ using System.Web.Mvc;
 using Algorithm.Models;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
+using Microsoft.Practices.Unity;
+using Newtonsoft.Json;
 
 namespace Algorithm.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        private IAlgorithm _algorithm;
+
+        public HomeController(IAlgorithm algorithm)
         {
-            return View(new InputData());
+            _algorithm = algorithm;
         }
 
-        public List<List<int>> SplitList(List<int> ints, int number)
+        public List<List<int>> SplitListIntoLists(List<int> ints, int number)
         {
             return ints.Select((x, i) => new {Index = i, Value = x})
                 .GroupBy(x => x.Index/number)
@@ -27,126 +31,146 @@ namespace Algorithm.Controllers
                 .ToList();
         }
 
-        public string JoinIntoString(int numAnts, IAlgorithm algorithm)
+        public int[] ConvertMatrixToArray(int n, int[,] ints)
         {
-            StringBuilder builder = new StringBuilder().AppendFormat("{0} ", numAnts);
-            for (int i = 0; i < numAnts; i++)
+            List<int> lineInts = new List<int>();
+            for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < numAnts; j++)
+                for (int j = 0; j < n; j++)
                 {
-                    var elem = ((Graph)algorithm.Graph).DistanceMatrix[i, j];
-                    builder.AppendFormat("{0},", elem);
+                    var elem = ints[i, j];
+                    lineInts.Add(elem);
                 }
             }
-            builder.Append(" ");
-            for (int i = 0; i < numAnts; i++)
-            {
-                for (int j = 0; j < numAnts; j++)
-                {
-                    var elem = ((Graph)algorithm.Graph).FlowMatrix[i, j];
-                    builder.AppendFormat("{0},", elem);
-                }
-            }
-            return builder.ToString();
+            return lineInts.ToArray();
         }
 
-        public void SetGraphMatrices(IAlgorithm algorithm, List<List<int>> lists, int n, int pheromone)
+        public void SetGraphMatrices(IAlgorithm algorithm, Matrix matrix)
         {
             algorithm.Graph.Edges.Clear();
-            for (int i = 0; i < lists[0].Count; i++)
+            
+            int n = algorithm.Graph.Nodes.Count;
+            int pheromone = ((StandartAntAlgorithm) algorithm).Pheromone;
+
+            for (int i = 0; i < matrix.DistGraph.Count(); i++)
             {
-                var elem = lists[0][i];
-                ((Graph)algorithm.Graph).DistanceMatrix[i / n, i % n] = elem;
+                var elem = matrix.DistGraph[i];
+                ((Graph) algorithm.Graph).DistanceMatrix[i/n, i%n] = elem;
                 algorithm.Graph.Edges.Add(new Edge
                 {
-                    Begin = i / n,
-                    End = i % n,
+                    Begin = i/n,
+                    End = i%n,
                     HeuristicInformation = elem,
                     Pheromone = pheromone
                 });
             }
-            for (int i = 0; i < lists[1].Count; i++)
+            for (int i = 0; i < matrix.FlowGraph.Count(); i++)
             {
-                var elem = lists[1][i];
-                ((Graph)algorithm.Graph).FlowMatrix[i / n, i % n] = elem;
+                var elem = matrix.FlowGraph[i];
+                ((Graph) algorithm.Graph).FlowMatrix[i/n, i%n] = elem;
             }
+        }
+        
+        public ActionResult Index(InputData input)
+        {
+            if (input == null)
+            {
+                return View(new InputData());
+            }
+            return View(input);
         }
 
         [HttpPost]
-        public ActionResult Index(HttpPostedFileBase file)
+        public ActionResult LoadFile(HttpPostedFileBase file)
         {
-            if (file.ContentLength > 0)
+            InputData input = null;
+            if (file != null)
             {
-                var fileName = Path.GetFileName(file.FileName);
-                if (fileName != null)
+                if (file.ContentLength > 0)
                 {
-                    StreamReader reader = new StreamReader(file.InputStream);
+                    var fileName = Path.GetFileName(file.FileName);
+                    if (fileName != null)
+                    {
+                        AlgorithmCreator creator = new AlgorithmCreator(file.InputStream);
+                        StandartAntAlgorithm algorithm = (StandartAntAlgorithm) creator.CreateStandartAlgorithm();
+                        Session["algorithm"] = algorithm;
+                        input = new InputData
+                        {
+                            PheromoneIncrement = algorithm.Pheromone.ToString(),
+                            ExtraPheromoneIncrement = algorithm.ExtraPheromone.ToString(),
+                            AntsNumber = algorithm.Graph.Nodes.Count.ToString(),
+                            NoUpdatesLimit = algorithm.MaxIterationsNoChanges.ToString(),
+                            IterationsNumber = algorithm.MaxIterations.ToString(),
+                        };
+                    }
                 }
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", input);
         }
 
         [HttpPost]
-        public HtmlString InputMatrix(InputData model)
-        {  
-            int pheromInc;
-            int extraPheromInc;
-            int numAnts;
-            int noUpdatesLim;
-            int numIter;
-            try
-            {
-                pheromInc = Convert.ToInt32(model.PheromoneIncrement);
-                extraPheromInc = Convert.ToInt32(model.ExtraPheromoneIncrement);
-                numAnts = Convert.ToInt32(model.AntsNumber);
-                noUpdatesLim = Convert.ToInt32(model.NoUpdatesLimit);
-                numIter = Convert.ToInt32(model.IterationsNumber);
-            }
-            catch (FormatException e)
-            {
-                return new HtmlString(e.Message);
-            }
-            
-            Graph graph = new Graph
-            {
-                Info = new Tuple<int, int, int, int, int>(pheromInc,
-                    extraPheromInc, numAnts, noUpdatesLim, numIter)
-            };
-            graph.SetValues(numAnts);
-            Session["graph"] = graph;
-
-            AlgorithmCreator creator = new AlgorithmCreator(new FileStream(
-                ConfigurationManager.AppSettings["Graphs"], FileMode.Open));
-            IAlgorithm algorithm = creator.CreateStandartAlgorithm();
-            Session["algorithm"] = algorithm;
-            
-            return new HtmlString(JoinIntoString(numAnts, algorithm));            
-        }
-
-        [HttpPost]
-        public HtmlString ProcessMatrix(string[] array)
+        public JsonResult InputMatrix(InputData model)
         {
-            List<int> ints = new List<int>();
-            try
+            if (Session["algorithm"] == null)
             {
-                array.ToList().ForEach(s => ints.Add(Convert.ToInt32(s)));
-            }
-            catch (FormatException e)
-            {
-                return new HtmlString(e.Message);
-            }
-            catch(Exception e)
-            {
-                return new HtmlString(e.Message);
+                AlgorithmCreator creator = new AlgorithmCreator(new FileStream(
+                    ConfigurationManager.AppSettings["Graphs"], FileMode.Open));
+                IAlgorithm algorithm = creator.CreateStandartAlgorithm();
+                Session["algorithm"] = algorithm;
             }
 
-            List<List<int>> lists = SplitList(ints, array.Count() / 2);
-            
+            else
+            {
+                int pheromInc;
+                int extraPheromInc;
+                int numAnts;
+                int noUpdatesLim;
+                int numIter;
+                try
+                {
+                    pheromInc = Convert.ToInt32(model.PheromoneIncrement);
+                    extraPheromInc = Convert.ToInt32(model.ExtraPheromoneIncrement);
+                    numAnts = Convert.ToInt32(model.AntsNumber);
+                    noUpdatesLim = Convert.ToInt32(model.NoUpdatesLimit);
+                    numIter = Convert.ToInt32(model.IterationsNumber);
+                }
+                catch (FormatException e)
+                {
+                    return Json(e.Message);
+                }
+
+                Graph graph = new Graph
+                {
+                    Info = new Tuple<int, int, int, int, int>(pheromInc,
+                        extraPheromInc, numAnts, noUpdatesLim, numIter)
+                };
+                graph.SetValues(numAnts);
+                Session["graph"] = graph;
+
+                Matrix matrix = new Matrix(numAnts);
+                
+                Graph currGraph = ((Graph)((StandartAntAlgorithm) Session["algorithm"]).Graph);
+                matrix.DistGraph = ConvertMatrixToArray(numAnts, currGraph.DistanceMatrix);
+                matrix.FlowGraph = ConvertMatrixToArray(numAnts, currGraph.FlowMatrix);
+                
+                return Json(matrix);
+            }
+            return Json(null);
+        }
+
+        [HttpPost]
+        public HtmlString ProcessMatrix(Matrix matrix)
+        {
+            if (matrix == null)
+            {
+                return null;
+            }
+
             StandartAntAlgorithm algorithm = (StandartAntAlgorithm) Session["algorithm"];
-            algorithm.Graph = (Graph) Session["graph"];
+            StandartAntAlgorithm savedAlgorithm = (StandartAntAlgorithm)StandartAntAlgorithm.DeepObjectClone(algorithm);
 
-            int nAnts = algorithm.Graph.Nodes.Count;
-            SetGraphMatrices(algorithm, lists, nAnts, algorithm.Pheromone);
+            algorithm.Graph = (Graph)Session["graph"];
+            SetGraphMatrices(algorithm, matrix);
             
             algorithm.CurrentIteration = 0;
             algorithm.CurrentIterationNoChanges = 0;
@@ -154,7 +178,9 @@ namespace Algorithm.Controllers
             
             algorithm.Run();
             string result = algorithm.ResultBuilder.ToString();
-            
+
+            Session["algorithm"] = savedAlgorithm;
+
             return new HtmlString(result);
         }
     }

@@ -6,6 +6,10 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Algorithm.Unity;
+using AntsLibrary.Classes;
+using Grsu.Lab.Aoc.Contracts;
+using Microsoft.Practices.Unity;
 
 namespace Algorithm
 {
@@ -18,10 +22,15 @@ namespace Algorithm
         {
             AreaRegistration.RegisterAllAreas();
 
-            //WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            //Initialize IoC container/Unity
+            Bootstrapper.Initialise();
+            //Register our custom controller factory
+            ControllerBuilder.Current.SetControllerFactory(typeof(MvcControllerFactory));
+        
         }
     }
 }
