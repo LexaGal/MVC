@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Algorithm.Controllers;
+using Algorithm.Repository;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
 using Microsoft.Practices.Unity;
@@ -21,7 +23,9 @@ namespace Algorithm.Unity
         private static IUnityContainer BuildUnityContainer()
         {
             var container = new UnityContainer();
-            container.RegisterType<IAlgorithm, StandartAntAlgorithm>();
+            container.RegisterType<HomeController>();
+            container.RegisterType<IAlgorithm, AntAlgorithm>();
+            container.RegisterType<IRepository, FileRepository>();
             container.RegisterType<IGraph, Graph>();
             MvcUnityContainer.Container = container;
             return container;

@@ -7,7 +7,7 @@
     <input type="submit"/>
 </form>
 
-@using (Html.BeginForm("InputMatrix", "Home", FormMethod.Post, new {id = "form"}))
+@using (Html.BeginForm("InputMatrix", "Home", FormMethod.Post, new {id = "inputForm"}))
 {
     Html.AntiForgeryToken();
     Html.ValidationSummary();        
@@ -29,24 +29,73 @@
         @Html.LabelFor(m => m.IterationsNumber)
         @Html.TextBoxFor(m => m.IterationsNumber, new {value = "100"})
     </div>
-    <input id="postForm" type="button" value="Input"/>
+    <input id="postInputForm" type="button" value="Input"/>
 }
+<button id="loadFiles">Load</button><br/>
+<button id="postMatrix">Process</button><br/>   
 
-<textarea style="position: absolute; margin: 20px 0 0 700px" cols="30" rows="20"></textarea>
-<button id="matrix">Process</button>   
-<table id='table1'></table>
-<table id='table2'></table>
+<textarea id="textareaResult" style="position: absolute; margin: -190px 0 0 900px" cols="30" rows="35"></textarea>
+<textarea id="textareaFile" style="position: absolute; margin: -190px 0 0 450px" cols="60" rows="10"></textarea>
+<select id="files" style="position: absolute; margin: -170px 0 0 340px"></select>
+<button id="chooseFile" style="position: absolute; margin: -190px 0 0 340px">Choose</button>
+<table id='DistTable'></table>
+<table id='FlowTable'></table>
 
 <script type="text/javascript">
 
+    var chosenFileName;
+
     $(document).ready(function() {
-        $('#postForm').click(function(event) {
+        $('#chooseFile').click(function(event) {
             event.preventDefault();
 
             $.ajax({
-                url: $('#form').attr('action'),
-                type: $('#form').attr('method'),
-                data: $('#form').serialize(),
+                url: '@Url.Action("InputMatrix", "Home")',
+                type: "POST",
+                data: {name: chosenFileName },
+                success: function(data) {
+                    createMatrices(data);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('#loadFiles').click(function(event) {
+            event.preventDefault();
+
+            $('#files').empty();
+            $.ajax({
+                url: '@Url.Action("GetFiles", "Home")',
+                type: "POST",
+                success: function (data) {
+                    $.each(data.names, function(i, el) {
+                        $('#files').append(new Option(el));
+                    });
+                    
+                    $("#files").bind("change", function () {
+                        for (var i = 0; i < data.names.length; i++) {
+                            if (data.names[i] === $(this).val()) {
+                                chosenFileName = $(this).val();
+                                $('#textareaFile').text(data.values[i]);
+                                break;
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+    $(document).ready(function() {
+        $('#postInputForm').click(function(event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: $('#inputForm').attr('action'),
+                type: $('#inputForm').attr('method'),
+                data: $('#inputForm').serialize(),
                 success: function(data) {
                     createMatrices(data);
                 }
@@ -55,7 +104,7 @@
     });
 
 
-    $("#matrix").click(function() {
+    $("#postMatrix").click(function() {
         var distArray = createArray('Dist');
         var flowArray = createArray('Flow');
         var matrix = {
@@ -69,7 +118,7 @@
             traditional: true,
             data: matrix,
             success: function(data) {
-                $('textArea').text(data);
+                $('#textareaResult').text(data);
             },
             error: function(data) {
                 alert(data);

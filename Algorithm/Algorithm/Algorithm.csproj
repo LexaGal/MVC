@@ -163,6 +163,8 @@
     <Compile Include="Models\InputData.cs" />
     <Compile Include="Models\Matrix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\FileRepository.cs" />
+    <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Unity\MvcUnityContainer.cs" />
     <Compile Include="Unity\Bootstrapper.cs" />
     <Compile Include="Unity\MvcControllerFactory.cs" />
@@ -241,7 +243,9 @@
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

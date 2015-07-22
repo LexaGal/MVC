@@ -7,6 +7,8 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using Algorithm.Models;
+using Algorithm.Repository;
+using Algorithm.Unity;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
 using Microsoft.Practices.Unity;
@@ -17,10 +19,12 @@ namespace Algorithm.Controllers
     public class HomeController : Controller
     {
         private IAlgorithm _algorithm;
+        private IRepository _repository;
 
-        public HomeController(IAlgorithm algorithm)
+        public HomeController(IAlgorithm algorithm, IRepository repository)
         {
             _algorithm = algorithm;
+            _repository = repository;
         }
 
         public List<List<int>> SplitListIntoLists(List<int> ints, int number)
@@ -50,7 +54,7 @@ namespace Algorithm.Controllers
             algorithm.Graph.Edges.Clear();
             
             int n = algorithm.Graph.Nodes.Count;
-            int pheromone = ((StandartAntAlgorithm) algorithm).Pheromone;
+            int pheromone = ((AntAlgorithm) algorithm).Pheromone;
 
             for (int i = 0; i < matrix.DistGraph.Count(); i++)
             {
@@ -92,8 +96,9 @@ namespace Algorithm.Controllers
                     if (fileName != null)
                     {
                         AlgorithmCreator creator = new AlgorithmCreator(file.InputStream);
-                        StandartAntAlgorithm algorithm = (StandartAntAlgorithm) creator.CreateStandartAlgorithm();
-                        Session["algorithm"] = algorithm;
+                        _algorithm = (AntAlgorithm) creator.CreateStandartAlgorithm();
+                        AntAlgorithm algorithm = (AntAlgorithm) _algorithm;
+                        Session["algorithm"] = _algorithm;
                         input = new InputData
                         {
                             PheromoneIncrement = algorithm.Pheromone.ToString(),
@@ -108,15 +113,35 @@ namespace Algorithm.Controllers
             return RedirectToAction("Index", input);
         }
 
-        [HttpPost]
-        public JsonResult InputMatrix(InputData model)
+        public JsonResult GetFiles()
         {
-            if (Session["algorithm"] == null)
+            return Json(new
             {
-                AlgorithmCreator creator = new AlgorithmCreator(new FileStream(
-                    ConfigurationManager.AppSettings["Graphs"], FileMode.Open));
-                IAlgorithm algorithm = creator.CreateStandartAlgorithm();
-                Session["algorithm"] = algorithm;
+                names = _repository.GetAll("Names"),
+                values = _repository.GetAll("Values")
+            });
+        }
+
+        [HttpPost]
+        public JsonResult InputMatrix(InputData model, string name = null)
+        {
+            if (Session["algorithm"] == null || name != null)
+            {
+                AlgorithmCreator creator =
+                    new AlgorithmCreator(new MemoryStream(Encoding.UTF8.GetBytes(_repository.Get(name))));
+                _algorithm = creator.CreateStandartAlgorithm();
+                Session["algorithm"] = _algorithm;
+
+                Session["graph"] = _algorithm.Graph;
+
+                int numAnts =_algorithm.Graph.Nodes.Count;
+
+                Matrix matrix = new Matrix(numAnts);
+                Graph currGraph = ((Graph)((AntAlgorithm)Session["algorithm"]).Graph);
+                matrix.DistGraph = ConvertMatrixToArray(numAnts, currGraph.DistanceMatrix);
+                matrix.FlowGraph = ConvertMatrixToArray(numAnts, currGraph.FlowMatrix);
+
+                return Json(matrix);
             }
 
             else
@@ -148,14 +173,13 @@ namespace Algorithm.Controllers
                 Session["graph"] = graph;
 
                 Matrix matrix = new Matrix(numAnts);
-                
-                Graph currGraph = ((Graph)((StandartAntAlgorithm) Session["algorithm"]).Graph);
+
+                Graph currGraph = ((Graph) ((AntAlgorithm) Session["algorithm"]).Graph);
                 matrix.DistGraph = ConvertMatrixToArray(numAnts, currGraph.DistanceMatrix);
                 matrix.FlowGraph = ConvertMatrixToArray(numAnts, currGraph.FlowMatrix);
-                
+
                 return Json(matrix);
             }
-            return Json(null);
         }
 
         [HttpPost]
@@ -166,9 +190,10 @@ namespace Algorithm.Controllers
                 return null;
             }
 
-            StandartAntAlgorithm algorithm = (StandartAntAlgorithm) Session["algorithm"];
-            StandartAntAlgorithm savedAlgorithm = (StandartAntAlgorithm)StandartAntAlgorithm.DeepObjectClone(algorithm);
+            _algorithm = (AntAlgorithm) Session["algorithm"];
+            AntAlgorithm savedAlgorithm = (AntAlgorithm)AntAlgorithm.DeepObjectClone(_algorithm);
 
+            AntAlgorithm algorithm = (AntAlgorithm) _algorithm;
             algorithm.Graph = (Graph)Session["graph"];
             SetGraphMatrices(algorithm, matrix);
             
