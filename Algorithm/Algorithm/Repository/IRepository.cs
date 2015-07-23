@@ -9,8 +9,8 @@ namespace Algorithm.Repository
     {
         IEnumerable<string> GetAll(string type);
         string Get(string id);
-        void Save(string id);
-        void Edit(string id);
-        void DeleteObject(string id);
+        bool Save(string id, string value);
+        bool Edit(string id, string value);
+        bool DeleteObject(string id);
     }
 }

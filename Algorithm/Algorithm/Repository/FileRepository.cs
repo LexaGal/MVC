@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using WebGrease.Css.Extensions;
 
 namespace Algorithm.Repository
 {
     public class FileRepository : IRepository
     {
         private StreamReader Reader { get; set; }
-        private const string Extension = ".txt";
-        private const string Path = "B:/";
         private Dictionary<string, string> FilesDictionary { get; set; }
 
         public FileRepository()
@@ -20,7 +20,7 @@ namespace Algorithm.Repository
             FilesDictionary = new Dictionary<string, string>();
             foreach (var name in names)
             {
-                StreamReader reader = new StreamReader(string.Format("{0}{1}{2}", Path, name, Extension));
+                StreamReader reader = new StreamReader(name);
                 FilesDictionary.Add(name, reader.ReadToEnd());
                 reader.Close();
             }
@@ -31,7 +31,6 @@ namespace Algorithm.Repository
             if (type == "Names")
             {
                 return FilesDictionary.Keys;
-                
             }
             if (type == "Values")
             {
@@ -42,16 +41,45 @@ namespace Algorithm.Repository
 
         public string Get(string id)
         {
-            return FilesDictionary[id];
+            try
+            {
+                return FilesDictionary[id];
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return null;
+            }
         }
 
-        public void Save(string id)
-        {}
+        public bool Save(string id, string value)
+        {
+            if (!FilesDictionary.ContainsKey(id))
+            {
+                FilesDictionary.Add(id, value);
+                return true;
+            }
+            return false;
+        }
 
-        public void Edit(string id)
-        {}
+        public bool Edit(string id, string value)
+        {
+            if (FilesDictionary.ContainsKey(id))
+            {
+                FilesDictionary.Remove(id);
+                FilesDictionary.Add(id, value);
+                return true;
+            }
+            return false;
+        }
 
-        public void DeleteObject(string id)
-        {}
+        public bool DeleteObject(string id)
+        {
+            if (FilesDictionary.ContainsKey(id))
+            {
+                FilesDictionary.Remove(id);
+                return true;
+            } 
+            return false;
+        }
     }
 }
