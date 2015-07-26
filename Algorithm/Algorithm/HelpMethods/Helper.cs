@@ -32,7 +32,7 @@ namespace Algorithm.HelpMethods
             return lineInts.ToArray();
         }
 
-        public static void SetGraphMatrices(IAlgorithm algorithm, Matrix matrix)
+        public static void SetGraphMatrices(IAlgorithm algorithm, GraphViewModel matrix)
         {
             algorithm.Graph.Edges.Clear();
 

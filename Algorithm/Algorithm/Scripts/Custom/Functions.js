@@ -1,8 +1,8 @@
 ﻿function createMatrices(data) {
-    $('#DistTable').empty();
-    $('#FlowTable').empty();
-    $('#DistTable').append('<thead><tr><td>Distances</td></tr></thead>');
-    $('#FlowTable').append('<thead><tr><td>Flows</td></tr></thead>');
+    $('#DistTableId').empty();
+    $('#FlowTableId').empty();
+    $('#DistTableId').append('<thead><tr><td>Distances</td></tr></thead>');
+    $('#FlowTableId').append('<thead><tr><td>Flows</td></tr></thead>');
 
     var dist = [];
     var flow = [];
@@ -21,7 +21,7 @@
 
         if ((i + 1) % size === 0) {
         
-            textBoxTrDist.appendTo($('#DistTable'));
+            textBoxTrDist.appendTo($('#DistTableId'));
             textBoxTrDist = $(document.createElement('tr')).attr("id", 'tableRowDistId' + i / size);
         }
     }
@@ -32,7 +32,7 @@
 
         if ((i + 1) % size === 0) {
 
-            textBoxTrFlow.appendTo($('#FlowTable'));
+            textBoxTrFlow.appendTo($('#FlowTableId'));
             textBoxTrFlow = $(document.createElement('tr')).attr("id", 'tableRowFlowId' + i / size);
         }
     }

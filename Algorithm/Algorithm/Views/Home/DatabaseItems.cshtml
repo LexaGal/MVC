@@ -1,0 +1,78 @@
+﻿@model Algorithm.Models.DatabaseViewModel
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<script src="~/Scripts/Custom/Functions.js"></script>
+
+<table id="table" style="border: solid black">
+@foreach (var p in Model.Parameters)
+{
+    @Html.DisplayFor(item => p.StringView)
+    string id = string.Format("parametersId{0}", p.Id);
+    <button id=@id>+</button><br/>
+}
+
+@foreach (var d in Model.DistMatrices)
+{
+    @Html.TextAreaFor(item => d.MatrixView)
+    string id = string.Format("distMatrixId{0}", d.Id);
+    <button id=@id>+</button><br/>
+}
+
+@foreach (var f in Model.FlowMatrices)
+{
+    @Html.TextAreaFor(item => f.MatrixView)
+    string id = string.Format("flowMatrixId{0}", f.Id);
+    <button id=@id>+</button><br/>
+}
+</table>
+
+<button id="go">Go</button>
+<textarea id="textareaResultId"></textarea>
+<script type="text/javascript">
+    var parametersId;
+    var distMatrixId;
+    var flowMatrixId;
+
+    $('[id^=parametersId').click(function(e) {
+        e.preventDefault();
+        parametersId = $(this).attr('id');
+        $('[id^=parametersId').each(function() {
+            $(this).text('+');
+        });
+        $(this).text('Chosen');
+    });
+
+    $('[id^=distMatrixId').click(function(e) {
+        e.preventDefault();
+        distMatrixId = $(this).attr('id');
+        $('[id^=distMatrixId').each(function () {
+            $(this).text('+');
+        });
+        $(this).text('Chosen');
+    });
+
+    $('[id^=flowMatrixId').click(function(e) {
+        e.preventDefault();
+        flowMatrixId = $(this).attr('id');
+        $('[id^=flowMatrixId').each(function () {
+            $(this).text('+');
+        });
+        $(this).text('Chosen');
+    });
+
+    $('#go').click(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ProcessChoosenIds", "Home")',
+            traditional: true,
+            data: { parametersId: parametersId, distMatrixId: distMatrixId, flowMatrixId: flowMatrixId },
+            success: function(data) {
+                $('#textareaResultId').text(data);
+            },
+            error: function(data) {
+                alert(data);
+            }
+        });
+    });
+</script>

@@ -1,0 +1,91 @@
+﻿<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<script src="~/Scripts/Custom/Functions.js"></script>
+
+
+@*<button id="loadFiles">Load</button><br/>
+<button id="processMatrix">Process</button><br/>
+<button id="saveGraph">Save</button><br/>
+<input id="saveFileId" type="text" placeholder="Input file name">
+<textarea id="textareaResultId" style="position: absolute; margin: -190px 0 0 1200px" cols="30" rows="35"></textarea>
+<textarea id="textareaFileId" style="position: absolute; margin: -190px 0 0 450px" cols="60" rows="10"></textarea>
+<select id="filesId" style="position: absolute; margin: -170px 0 0 340px"></select>
+<button id="chooseFile" style="position: absolute; margin: -190px 0 0 340px">Choose</button>*@
+
+<script type="text/javascript">
+
+var chosenFileName;
+
+    $(document).ready(function () {
+        $('#saveGraph').click(function (event) {
+            event.preventDefault();
+
+            var distArray = createArray('Dist');
+            var flowArray = createArray('Flow');
+            var inputParameters = {
+                PheromoneIncrement : $('#PheromoneIncrement').val(),
+                ExtraPheromoneIncrement: $('#ExtraPheromoneIncrement').val(),
+                AntsNumber: $('#AntsNumber').val(),
+                NoUpdatesLimit: $('#NoUpdatesLimit').val(),
+                IterationsNumber: $('#IterationsNumber').val()
+            }
+            var graph = {
+                InputParameters: inputParameters,
+                N: Math.sqrt(distArray.length),
+                DistGraph: distArray,
+                FlowGraph: flowArray
+            }
+
+            $.ajax({
+                url: '@Url.Action("SaveGraph", "Home")',
+                type: "POST",
+                datatype: "json",
+                traditional: true,
+                data: { graphString: JSON.stringify(graph), name: $('#saveFileId').val() },
+                success: function (data) {
+                    $('#saveFileId').text(data);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('#chooseFile').click(function(event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: '@Url.Action("InputMatrix", "Home")',
+                type: "POST",
+                data: {name: chosenFileName },
+                success: function(data) {
+                    createMatrices(data);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('#loadFiles').click(function(event) {
+            event.preventDefault();
+
+            $('#filesId').empty();
+            $.ajax({
+                url: '@Url.Action("GetParameters", "Home")',
+                type: "POST",
+                success: function(data) {
+                    $.each(data.names, function(i, el) {
+                        $('#filesId').append(new Option(el));
+                    });
+                    $("#filesId").bind("change", function() {
+                        for (var i = 0; i < data.names.length; i++) {
+                            if (data.names[i] === $(this).val()) {
+                                chosenFileName = $(this).val();
+                                $('#textareaFileId').text(data.values[i]);
+                                break;
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

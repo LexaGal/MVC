@@ -1,4 +1,4 @@
-﻿@model Algorithm.Models.InputData
+﻿@model Algorithm.Models.InputParametersViewModel
 <script src="~/Scripts/jquery-1.8.2.min.js"></script>
 <script src="~/Scripts/Custom/Functions.js"></script>
 
@@ -7,7 +7,7 @@
     <input type="submit"/>
 </form>
 
-@using (Html.BeginForm("InputMatrix", "Home", FormMethod.Post, new {id = "inputForm"}))
+@using (Html.BeginForm("InputMatrix", "Home", FormMethod.Post, new { id = "inputParametersFormId" }))
 {
     Html.AntiForgeryToken();
     Html.ValidationSummary();        
@@ -21,7 +21,7 @@
     </div>
     <div>
         @Html.LabelFor(m => m.AntsNumber)
-        @Html.TextBoxFor(m => m.AntsNumber, new {value = "8"})
+        @Html.TextBoxFor(m => m.AntsNumber, new {value = "5"})
     </div>
         @Html.LabelFor(m => m.NoUpdatesLimit)
         @Html.TextBoxFor(m => m.NoUpdatesLimit, new {value = "50"})
@@ -29,73 +29,24 @@
         @Html.LabelFor(m => m.IterationsNumber)
         @Html.TextBoxFor(m => m.IterationsNumber, new {value = "100"})
     </div>
-    <input id="postInputForm" type="button" value="Input"/>
+    <input id="postInputParametersForm" type="button" value="Input"/>
 }
-<button id="loadFiles">Load</button><br/>
-<button id="postMatrix">Process</button><br/>   
 
-<textarea id="textareaResult" style="position: absolute; margin: -190px 0 0 900px" cols="30" rows="35"></textarea>
-<textarea id="textareaFile" style="position: absolute; margin: -190px 0 0 450px" cols="60" rows="10"></textarea>
-<select id="files" style="position: absolute; margin: -170px 0 0 340px"></select>
-<button id="chooseFile" style="position: absolute; margin: -190px 0 0 340px">Choose</button>
-<table id='DistTable'></table>
-<table id='FlowTable'></table>
+<button id="processMatrix">Process</button><br/>
+<textarea id="textareaResultId" style="position: absolute; margin: -190px 0 0 1200px" cols="30" rows="35"></textarea>
+<table id='DistTableId'></table>
+<table id='FlowTableId'></table>
 
 <script type="text/javascript">
-
-    var chosenFileName;
-
+    
     $(document).ready(function() {
-        $('#chooseFile').click(function(event) {
+        $('#postInputParametersForm').click(function(event) {
             event.preventDefault();
 
             $.ajax({
-                url: '@Url.Action("InputMatrix", "Home")',
-                type: "POST",
-                data: {name: chosenFileName },
-                success: function(data) {
-                    createMatrices(data);
-                }
-            });
-        });
-    });
-
-    $(document).ready(function() {
-        $('#loadFiles').click(function(event) {
-            event.preventDefault();
-
-            $('#files').empty();
-            $.ajax({
-                url: '@Url.Action("GetFiles", "Home")',
-                type: "POST",
-                success: function (data) {
-                    $.each(data.names, function(i, el) {
-                        $('#files').append(new Option(el));
-                    });
-                    
-                    $("#files").bind("change", function () {
-                        for (var i = 0; i < data.names.length; i++) {
-                            if (data.names[i] === $(this).val()) {
-                                chosenFileName = $(this).val();
-                                $('#textareaFile').text(data.values[i]);
-                                break;
-                            }
-                        }
-                    });
-                }
-            });
-        });
-    });
-
-
-    $(document).ready(function() {
-        $('#postInputForm').click(function(event) {
-            event.preventDefault();
-
-            $.ajax({
-                url: $('#inputForm').attr('action'),
-                type: $('#inputForm').attr('method'),
-                data: $('#inputForm').serialize(),
+                url: $('#inputParametersFormId').attr('action'),
+                type: $('#inputParametersFormId').attr('method'),
+                data: $('#inputParametersFormId').serialize(),
                 success: function(data) {
                     createMatrices(data);
                 }
@@ -104,10 +55,10 @@
     });
 
 
-    $("#postMatrix").click(function() {
+    $("#processMatrix").click(function () {
         var distArray = createArray('Dist');
         var flowArray = createArray('Flow');
-        var matrix = {
+        var graph = {
             DistGraph: distArray,
             FlowGraph: flowArray
         }
@@ -116,9 +67,9 @@
             type: "POST",
             url: '@Url.Action("ProcessMatrix", "Home")',
             traditional: true,
-            data: matrix,
+            data: graph,
             success: function(data) {
-                $('#textareaResult').text(data);
+                $('#textareaResultId').text(data);
             },
             error: function(data) {
                 alert(data);

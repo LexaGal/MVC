@@ -1,87 +1,126 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using Algorithm.DomainModels;
 using Algorithm.HelpMethods;
 using Algorithm.Models;
-using Algorithm.Repository;
-using Algorithm.Unity;
+using Algorithm.Repository.Abstract;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
-using Microsoft.Practices.Unity;
-using Newtonsoft.Json;
 
 namespace Algorithm.Controllers
 {
     public class HomeController : Controller
     {
         private IAlgorithm _algorithm;
-        private IRepository _repository;
-
-        public HomeController(IAlgorithm algorithm, IRepository repository)
+        private IParametersRepository _parametersRepository;
+        private IDistMatricesRepository _distMatricesRepository;
+        private IFlowMatricesRepository _flowMatricesRepository;
+        private IResultsInfoRepository _resultsInfoRepository;
+       
+        public HomeController(IAlgorithm algorithm,
+            IParametersRepository parametersRepository,
+            IDistMatricesRepository distMatricesRepository,
+            IFlowMatricesRepository flowMatricesRepository,
+            IResultsInfoRepository resultsInfoRepository)
         {
             _algorithm = algorithm;
-            _repository = repository;
+            _resultsInfoRepository = resultsInfoRepository;
+            _flowMatricesRepository = flowMatricesRepository;
+            _distMatricesRepository = distMatricesRepository;
+            _parametersRepository = parametersRepository;
+            Parameters parameters = _parametersRepository.Get(1);
         }
 
 
-        public ActionResult Index(InputData input)
+        public ActionResult Index(InputParametersViewModel inputParameters)
         {
-            if (input == null)
+            if (inputParameters == null)
             {
-                return View(new InputData());
+                return View(new InputParametersViewModel());
             }
-            return View(input);
+            return View(inputParameters);
         }
 
+        public ActionResult DatabasePage(GraphViewModel graphViewModel)
+        {
+            if (graphViewModel == null)
+            {
+                return View(new GraphViewModel());
+            }
+            return View(graphViewModel);
+        }
+
+        public ActionResult DatabaseItems(DatabaseViewModel databaseViewModel)
+        {
+            if (databaseViewModel.GetType().GetProperties().Any(p => p.GetValue(databaseViewModel) == null))
+            {
+                DatabaseViewModel database = new DatabaseViewModel
+                {
+                    Parameters = _parametersRepository.GetAll().ToList(),
+                    DistMatrices = _distMatricesRepository.GetAll().ToList(),
+                    FlowMatrices = _flowMatricesRepository.GetAll().ToList()
+                };
+                return View(database);
+            }
+            return View(databaseViewModel);
+        }
 
         [HttpPost]
         public ActionResult LoadFile(HttpPostedFileBase file)
         {
-            InputData input = null;
-            if (file != null)
+            InputParametersViewModel inputParameters = null;
+            if (file.ContentLength > 0)
             {
-                if (file.ContentLength > 0)
+                var fileName = Path.GetFileName(file.FileName);
+                if (fileName != null)
                 {
-                    var fileName = Path.GetFileName(file.FileName);
-                    if (fileName != null)
+                    AlgorithmCreator creator = new AlgorithmCreator(file.InputStream);
+                    _algorithm = (AntAlgorithm) creator.CreateStandartAlgorithm();
+                    AntAlgorithm algorithm = (AntAlgorithm) _algorithm;
+                    Session["algorithm"] = _algorithm;
+                    inputParameters = new InputParametersViewModel
                     {
-                        AlgorithmCreator creator = new AlgorithmCreator(file.InputStream);
-                        _algorithm = (AntAlgorithm) creator.CreateStandartAlgorithm();
-                        AntAlgorithm algorithm = (AntAlgorithm) _algorithm;
-                        Session["algorithm"] = _algorithm;
-                        input = new InputData
-                        {
-                            PheromoneIncrement = algorithm.Pheromone.ToString(),
-                            ExtraPheromoneIncrement = algorithm.ExtraPheromone.ToString(),
-                            AntsNumber = algorithm.Graph.Nodes.Count.ToString(),
-                            NoUpdatesLimit = algorithm.MaxIterationsNoChanges.ToString(),
-                            IterationsNumber = algorithm.MaxIterations.ToString(),
-                        };
-                    }
+                        PheromoneIncrement = algorithm.Pheromone.ToString(),
+                        ExtraPheromoneIncrement = algorithm.ExtraPheromone.ToString(),
+                        AntsNumber = algorithm.Graph.Nodes.Count.ToString(),
+                        NoUpdatesLimit = algorithm.MaxIterationsNoChanges.ToString(),
+                        IterationsNumber = algorithm.MaxIterations.ToString(),
+                    };
                 }
             }
-            return RedirectToAction("Index", input);
+            return RedirectToAction("Index", inputParameters);
         }
 
 
         [HttpPost]
-        public JsonResult GetFiles()
+        public JsonResult GetParameters()
         {
-            return Json(new
-            {
-                names = _repository.GetAll("Names"),
-                values = _repository.GetAll("Values")
-            });
+            Parameters[] parameters = _parametersRepository.GetAll().ToArray();
+            return Json(new { parameters });
+        }
+
+        [HttpPost]
+        public HtmlString SaveGraph(string graphString, string name)
+        {
+            var jss = new JavaScriptSerializer();
+            GraphViewModel graphViewModel = jss.Deserialize<GraphViewModel>(graphString);
+
+            //_repository.Save(name, matr.ToString());
+            StreamWriter writer = new StreamWriter(ConfigurationManager.AppSettings["Names"]);
+            writer.BaseStream.Position = writer.BaseStream.Length;
+            writer.WriteLine(name);
+            writer.Close();
+            return new HtmlString("Saved");
         }
 
 
         [HttpPost]
-        public JsonResult InputMatrix(InputData model, string name = null)
+        public JsonResult InputMatrix(InputParametersViewModel model, string name = null)
         {
             int numAnts = 0;
             AlgorithmCreator creator;
@@ -90,20 +129,20 @@ namespace Algorithm.Controllers
 
             if (model.GetType().GetProperties().Any(p => p.GetValue(model) == null) && name == null)
             {
-                memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.GetAll("Values").First()));
-                stream = Stream.Synchronized(memoryStream);
-                creator = new AlgorithmCreator(stream);
-                _algorithm = creator.CreateStandartAlgorithm();
-                Session["graph"] = _algorithm.Graph;
+                //memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.GetAll().Values.First()));
+                //stream = Stream.Synchronized(memoryStream);
+                //creator = new AlgorithmCreator(stream);
+                //_algorithm = creator.CreateStandartAlgorithm();
+                //Session["graph"] = _algorithm.Graph;
                 numAnts = _algorithm.Graph.Nodes.Count;
             }
 
             else if (name != null)
             {
-                memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.Get(name)));
-                stream = Stream.Synchronized(memoryStream);
-                creator = new AlgorithmCreator(stream);
-                _algorithm = creator.CreateStandartAlgorithm();
+                //memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.Get(name)));
+                //stream = Stream.Synchronized(memoryStream);
+                //creator = new AlgorithmCreator(stream);
+                //_algorithm = creator.CreateStandartAlgorithm();
                 Session["graph"] = _algorithm.Graph;
                 numAnts = _algorithm.Graph.Nodes.Count;
             }
@@ -126,10 +165,10 @@ namespace Algorithm.Controllers
                 {
                     return Json(e.Message);
                 }
-                memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.GetAll("Values").First()));
-                stream = Stream.Synchronized(memoryStream);
-                creator = new AlgorithmCreator(stream);
-                _algorithm = creator.CreateStandartAlgorithm();
+                //memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.GetAll().Values.First()));
+                //stream = Stream.Synchronized(memoryStream);
+                //creator = new AlgorithmCreator(stream);
+                //_algorithm = creator.CreateStandartAlgorithm();
 
                 Graph graph = new Graph
                 {
@@ -142,7 +181,7 @@ namespace Algorithm.Controllers
             }
 
             Session["algorithm"] = _algorithm;
-            Matrix matrix = new Matrix(numAnts);
+            GraphViewModel matrix = new GraphViewModel(numAnts);
             Graph currGraph = ((Graph) ((AntAlgorithm) Session["algorithm"]).Graph);
             matrix.DistGraph = Helper.ConvertMatrixToArray(numAnts, currGraph.DistanceMatrix);
             matrix.FlowGraph = Helper.ConvertMatrixToArray(numAnts, currGraph.FlowMatrix);
@@ -151,9 +190,9 @@ namespace Algorithm.Controllers
 
 
         [HttpPost]
-        public HtmlString ProcessMatrix(Matrix matrix)
+        public HtmlString ProcessMatrix(GraphViewModel graph)
         {
-            if (matrix == null || Session["algorithm"] == null || Session["graph"] == null)
+            if (graph == null || Session["algorithm"] == null || Session["graph"] == null)
             {
                 return new HtmlString(null);
             }
@@ -163,7 +202,7 @@ namespace Algorithm.Controllers
 
             AntAlgorithm algorithm = (AntAlgorithm) _algorithm;
             algorithm.Graph = (Graph)Session["graph"];
-            Helper.SetGraphMatrices(algorithm, matrix);
+            Helper.SetGraphMatrices(algorithm, graph);
             
             algorithm.CurrentIteration = 0;
             algorithm.CurrentIterationNoChanges = 0;
@@ -175,6 +214,11 @@ namespace Algorithm.Controllers
             Session["algorithm"] = savedAlgorithm;
 
             return new HtmlString(result);
+        }
+
+        public HtmlString ProcessChoosenIds(string parametersId, string distMatrixId, string flowMatrixId)
+        {
+            return new HtmlString("");
         }
     }
 }
