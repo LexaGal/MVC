@@ -16,18 +16,19 @@ namespace Algorithm.DomainModels
             get
             {
                 StringBuilder builder = new StringBuilder();
+                builder.Append("Distances Matrix:\n");
                 int i = 0;
                 foreach (var e in Regex.Split(Matrix, @" +"))
                 {
                     i++;
                     if (i % N == 0)
                     {
-                        builder.Append(e).Append("\r\n");
+                        builder.Append(e);
                         continue;
                     }
                     builder.Append(e).Append('\t');
                 }
-                return builder.ToString();
+                return builder.Append('\n').ToString();
             }
         }
 

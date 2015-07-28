@@ -181,6 +181,7 @@
     <Compile Include="Repository\Concrete\ParametersRepository.cs" />
     <Compile Include="Repository\Concrete\Repository.cs" />
     <Compile Include="Repository\Concrete\ResultsInfoRepository.cs" />
+    <Compile Include="Unity\UnityDependencyResolver.cs" />
     <Compile Include="Unity\MvcUnityContainer.cs" />
     <Compile Include="Unity\Bootstrapper.cs" />
     <Compile Include="Unity\MvcControllerFactory.cs" />

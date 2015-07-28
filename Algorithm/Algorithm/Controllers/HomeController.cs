@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -9,6 +10,7 @@ using Algorithm.DomainModels;
 using Algorithm.HelpMethods;
 using Algorithm.Models;
 using Algorithm.Repository.Abstract;
+using Algorithm.Repository.Concrete;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
 
@@ -29,11 +31,11 @@ namespace Algorithm.Controllers
             IResultsInfoRepository resultsInfoRepository)
         {
             _algorithm = algorithm;
-            _resultsInfoRepository = resultsInfoRepository;
             _flowMatricesRepository = flowMatricesRepository;
             _distMatricesRepository = distMatricesRepository;
             _parametersRepository = parametersRepository;
-            Parameters parameters = _parametersRepository.Get(1);
+            _resultsInfoRepository = resultsInfoRepository;
+            Parameters p = _parametersRepository.Get(1);
         }
 
 
@@ -110,11 +112,15 @@ namespace Algorithm.Controllers
             var jss = new JavaScriptSerializer();
             GraphViewModel graphViewModel = jss.Deserialize<GraphViewModel>(graphString);
 
-            //_repository.Save(name, matr.ToString());
-            StreamWriter writer = new StreamWriter(ConfigurationManager.AppSettings["Names"]);
-            writer.BaseStream.Position = writer.BaseStream.Length;
-            writer.WriteLine(name);
-            writer.Close();
+            //???
+
+            FileRepository repository = new FileRepository();
+            repository.Save(name, graphViewModel.ToString());
+            using (StreamWriter writer = new StreamWriter(ConfigurationManager.AppSettings["Names"]))
+            {
+                writer.BaseStream.Position = writer.BaseStream.Length;
+                writer.WriteLine(name);
+            }
             return new HtmlString("Saved");
         }
 
@@ -126,25 +132,34 @@ namespace Algorithm.Controllers
             AlgorithmCreator creator;
             MemoryStream memoryStream;
             Stream stream;
-
+            FileRepository repository = new FileRepository();
+            
             if (model.GetType().GetProperties().Any(p => p.GetValue(model) == null) && name == null)
             {
-                //memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.GetAll().Values.First()));
-                //stream = Stream.Synchronized(memoryStream);
-                //creator = new AlgorithmCreator(stream);
-                //_algorithm = creator.CreateStandartAlgorithm();
-                //Session["graph"] = _algorithm.Graph;
-                numAnts = _algorithm.Graph.Nodes.Count;
+                using (memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(repository.GetAll().Values.First())))
+                {
+                    using (stream = Stream.Synchronized(memoryStream))
+                    {
+                        creator = new AlgorithmCreator(stream);
+                        _algorithm = creator.CreateStandartAlgorithm();
+                        Session["graph"] = _algorithm.Graph;
+                        numAnts = _algorithm.Graph.Nodes.Count;
+                    }
+                }
             }
 
             else if (name != null)
             {
-                //memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.Get(name)));
-                //stream = Stream.Synchronized(memoryStream);
-                //creator = new AlgorithmCreator(stream);
-                //_algorithm = creator.CreateStandartAlgorithm();
-                Session["graph"] = _algorithm.Graph;
-                numAnts = _algorithm.Graph.Nodes.Count;
+                using (memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(repository.Get(name))))
+                {
+                    using (stream = Stream.Synchronized(memoryStream))
+                    {
+                        creator = new AlgorithmCreator(stream);
+                        _algorithm = creator.CreateStandartAlgorithm();
+                        Session["graph"] = _algorithm.Graph;
+                        numAnts = _algorithm.Graph.Nodes.Count;
+                    }
+                }
             }
 
             else if (model.GetType().GetProperties().All(p => p.GetValue(model) != null))
@@ -165,10 +180,15 @@ namespace Algorithm.Controllers
                 {
                     return Json(e.Message);
                 }
-                //memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(_repository.GetAll().Values.First()));
-                //stream = Stream.Synchronized(memoryStream);
-                //creator = new AlgorithmCreator(stream);
-                //_algorithm = creator.CreateStandartAlgorithm();
+
+                using (memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(repository.GetAll().Values.First())))
+                {
+                    using (stream = Stream.Synchronized(memoryStream))
+                    {
+                        creator = new AlgorithmCreator(stream);
+                        _algorithm = creator.CreateStandartAlgorithm();
+                    }
+                }
 
                 Graph graph = new Graph
                 {
@@ -218,7 +238,32 @@ namespace Algorithm.Controllers
 
         public HtmlString ProcessChoosenIds(string parametersId, string distMatrixId, string flowMatrixId)
         {
-            return new HtmlString("");
+            Parameters parameters = _parametersRepository.Get(Convert.ToInt32(parametersId));
+            DistMatrix distMatrix = _distMatricesRepository.Get(Convert.ToInt32(distMatrixId));
+            FlowMatrix flowMatrix = _flowMatricesRepository.Get(Convert.ToInt32(flowMatrixId));
+
+            string graph = string.Format("{0}{1}{2}",
+                parameters.StringView, distMatrix.MatrixView, flowMatrix.MatrixView);
+            Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(graph));
+            
+            AlgorithmCreator creator = new AlgorithmCreator(stream);
+            _algorithm = (AntAlgorithm)creator.CreateStandartAlgorithm();
+            _algorithm.Run();
+                    
+            HtmlString result = new HtmlString(((AntAlgorithm)_algorithm).ResultBuilder.ToString());
+            int pathCost = ((Ant) (((AntAlgorithm) _algorithm).BestAnt)).PathCost;
+
+            ResultInfo resultInfo = new ResultInfo
+            {
+                ParametersId = parameters.Id,
+                DistMatrixId = distMatrix.Id,
+                FlowMatrixId = flowMatrix.Id,
+                Result = result.ToString(),
+                PathCost = pathCost
+            };
+
+            _resultsInfoRepository.Add(resultInfo);
+            return result;
         }
     }
 }

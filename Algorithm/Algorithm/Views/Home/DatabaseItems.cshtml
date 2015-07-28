@@ -1,62 +1,87 @@
-﻿@model Algorithm.Models.DatabaseViewModel
+﻿@using Newtonsoft.Json
+@model Algorithm.Models.DatabaseViewModel
 <script src="~/Scripts/jquery-1.8.2.min.js"></script>
 <script src="~/Scripts/Custom/Functions.js"></script>
 
-<table id="table" style="border: solid black">
-@foreach (var p in Model.Parameters)
-{
-    @Html.DisplayFor(item => p.StringView)
-    string id = string.Format("parametersId{0}", p.Id);
-    <button id=@id>+</button><br/>
-}
+<textarea id="textareaPId" style="font-size: x-small" rows="13" cols="30"></textarea>
+<br/>
+Parameters:
+    @foreach (var p in Model.Parameters)
+    {
+        string id = string.Format("parametersId{0}", p.Id);
+        <button id=@id style="background-color: white">@p.Id</button>
+    }
 
-@foreach (var d in Model.DistMatrices)
-{
-    @Html.TextAreaFor(item => d.MatrixView)
-    string id = string.Format("distMatrixId{0}", d.Id);
-    <button id=@id>+</button><br/>
-}
+<textarea id="textareaDId" style="font-size: x-small; position: absolute; margin: -162px 0 0 0" rows="13" cols="75"></textarea>
+<br/>
+Distances Matrix:
+    @foreach (var d in Model.DistMatrices)
+    {
+        string id = string.Format("distMatrixId{0}", d.Id);
+        <button id=@id style="background-color: white">@d.Id</button>
+    }
 
-@foreach (var f in Model.FlowMatrices)
-{
-    @Html.TextAreaFor(item => f.MatrixView)
-    string id = string.Format("flowMatrixId{0}", f.Id);
-    <button id=@id>+</button><br/>
-}
-</table>
+<textarea id="textareaFId" style="font-size: x-small; position: absolute; margin: -182px 0 0 470px" rows="13" cols="75"></textarea>
+<br/>
+Flows Matrix:
+    @foreach (var f in Model.FlowMatrices)
+    {
+        string id = string.Format("flowMatrixId{0}", f.Id);
+        <button id=@id style="background-color: white">@f.Id</button>
+    }
 
-<button id="go">Go</button>
-<textarea id="textareaResultId"></textarea>
+<br/>
+<button id="go">Go</button><br/>
+<textarea id="textareaResultId" style="font-size: x-small" cols="30" rows="25"></textarea>
 <script type="text/javascript">
     var parametersId;
     var distMatrixId;
     var flowMatrixId;
+    var model = @Html.Raw(JsonConvert.SerializeObject(Model))
 
-    $('[id^=parametersId').click(function(e) {
+    $('[id^=parametersId').click(function (e) {
         e.preventDefault();
-        parametersId = $(this).attr('id');
+        parametersId = $(this).attr('id').substring(12, $(this).attr('id').length);
         $('[id^=parametersId').each(function() {
-            $(this).text('+');
+            $(this).css('background-color', 'white');
         });
-        $(this).text('Chosen');
+        $(this).css('background-color', 'gold');
+        
+        $.each(model.Parameters, function(ind, obj) {
+            if (obj.Id == parametersId) {
+                $('#textareaPId').text(obj.StringView);
+            }
+        });
     });
 
     $('[id^=distMatrixId').click(function(e) {
         e.preventDefault();
-        distMatrixId = $(this).attr('id');
+        distMatrixId = $(this).attr('id').substring(12, $(this).attr('id').length);
         $('[id^=distMatrixId').each(function () {
-            $(this).text('+');
+            $(this).css('background-color', 'white');
         });
-        $(this).text('Chosen');
+        $(this).css('background-color', 'gold');
+
+        $.each(model.DistMatrices, function (ind, obj) {
+            if (obj.Id == distMatrixId) {
+                $('#textareaDId').text(obj.MatrixView);
+            }
+        });
     });
 
     $('[id^=flowMatrixId').click(function(e) {
         e.preventDefault();
-        flowMatrixId = $(this).attr('id');
-        $('[id^=flowMatrixId').each(function () {
-            $(this).text('+');
+        flowMatrixId = $(this).attr('id').substring(12, $(this).attr('id').length);
+        $('[id^=flowMatrixId').each(function() {
+            $(this).css('background-color', 'white');
         });
-        $(this).text('Chosen');
+        $(this).css('background-color', 'gold');
+
+        $.each(model.FlowMatrices, function(ind, obj) {
+            if (obj.Id == flowMatrixId) {
+                $('#textareaFId').text(obj.MatrixView);
+            }
+        });
     });
 
     $('#go').click(function(e) {

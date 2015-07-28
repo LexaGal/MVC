@@ -26,11 +26,12 @@ namespace Algorithm
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            DependencyResolver.SetResolver(new UnityDependencyResolver(MvcUnityContainer.Container));
+
             //Initialize IoC container/Unity
-            Bootstrapper.Initialise();
+            //Bootstrapper.Initialise();
             //Register our custom controller factory
-            ControllerBuilder.Current.SetControllerFactory(typeof(MvcControllerFactory));
-        
+            //ControllerBuilder.Current.SetControllerFactory(typeof(MvcControllerFactory));       
         }
     }
 }

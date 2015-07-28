@@ -18,10 +18,10 @@ namespace Algorithm.DomainModels
             get
             {
                 StringBuilder builder = new StringBuilder();
-                builder.AppendFormat("Pheromone Increment: {0}, Extra Pheromone Increment: {1}, " +
-                                     "Number of Ants: {2}, No Updates Limit: {3}, Number of Iterations:" +
-                                     " {4} ", PheromoneInc, ExtraPheromoneInc,
-                    AntsNumber, NoUpdatesLimit, IterationsNumber);
+                builder.AppendFormat("Pheromone Increment:\n{0}\nExtra Pheromone Increment:\n{1}\n" +
+                                 "Number of Ants:\n{2}\nNo Updates Limit:\n{3}\nNumber of Iterations:" +
+                                 "\n{4}\n", PheromoneInc, ExtraPheromoneInc,
+                                 AntsNumber, NoUpdatesLimit, IterationsNumber);
                 return builder.ToString();
             }
         }

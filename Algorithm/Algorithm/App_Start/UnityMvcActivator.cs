@@ -2,6 +2,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Algorithm;
 using Microsoft.Practices.Unity.Mvc;
+using UnityDependencyResolver = Algorithm.Unity.UnityDependencyResolver;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(UnityWebActivator), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(UnityWebActivator), "Shutdown")]
