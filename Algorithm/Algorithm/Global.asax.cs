@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -9,6 +10,7 @@ using System.Web.Routing;
 using Algorithm.Unity;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
+using log4net;
 using Microsoft.Practices.Unity;
 
 namespace Algorithm
@@ -18,6 +20,7 @@ namespace Algorithm
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        public static ILog Log;
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -27,7 +30,10 @@ namespace Algorithm
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(MvcUnityContainer.Container));
-
+            
+            Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+            log4net.Config.XmlConfigurator.Configure();
+            
             //Initialize IoC container/Unity
             //Bootstrapper.Initialise();
             //Register our custom controller factory

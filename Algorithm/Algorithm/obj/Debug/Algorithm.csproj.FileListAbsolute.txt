@@ -65,3 +65,11 @@ C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\WebActivatorEx.dll
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.ServiceLocation.pdb
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.ServiceLocation.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Microsoft.Practices.Unity.Mvc.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\log4net.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\PostSharp.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\PostSharp.Patterns.Diagnostics.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\log4net.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\PostSharp.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\PostSharp.Patterns.Diagnostics.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Algorithm.pssym
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\obj\Debug\Algorithm.dll.postsharp

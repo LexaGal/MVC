@@ -236,13 +236,13 @@ namespace Algorithm.Controllers
             return new HtmlString(result);
         }
 
-        public HtmlString ProcessChoosenIds(string parametersId, string distMatrixId, string flowMatrixId)
+        public HtmlString ProcessChoosenItems(string parametersId, string distMatrixId, string flowMatrixId)
         {
             Parameters parameters = _parametersRepository.Get(Convert.ToInt32(parametersId));
             DistMatrix distMatrix = _distMatricesRepository.Get(Convert.ToInt32(distMatrixId));
             FlowMatrix flowMatrix = _flowMatricesRepository.Get(Convert.ToInt32(flowMatrixId));
 
-            string graph = string.Format("{0}{1}{2}",
+            string graph = string.Format("{0}\n{1}\n{2}",
                 parameters.StringView, distMatrix.MatrixView, flowMatrix.MatrixView);
             Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(graph));
             
@@ -264,6 +264,29 @@ namespace Algorithm.Controllers
 
             _resultsInfoRepository.Add(resultInfo);
             return result;
+        }
+
+        public HtmlString SaveChoosenItem(string type, string text)
+        {
+            if (type == "Parameters")
+            {
+                Parameters parameters = new Parameters(text);
+                _parametersRepository.Add(parameters);
+                return new HtmlString("Saved");
+            }
+            if (type == "DistMatrix")
+            {
+                DistMatrix distMatrix = new DistMatrix(text);
+                _distMatricesRepository.Add(distMatrix);
+                return new HtmlString("Saved");
+            }
+            if (type == "FlowMatrix")
+            {
+                FlowMatrix flowMatrix = new FlowMatrix(text);
+                _flowMatricesRepository.Add(flowMatrix);
+                return new HtmlString("Saved");
+            }
+            return new HtmlString("Not saved");
         }
     }
 }

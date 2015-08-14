@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="AlgorithmDbModelStoreContainer" CdmEntityContainer="AlgorithmDbEntities">
+    <EntitySetMapping Name="DistMatrices">
+      <EntityTypeMapping TypeName="AlgorithmDbModel.DistMatrix">
+        <MappingFragment StoreEntitySet="DistMatrices">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Matrix" ColumnName="Matrix" />
+          <ScalarProperty Name="N" ColumnName="N" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FlowMatrices">
+      <EntityTypeMapping TypeName="AlgorithmDbModel.FlowMatrix">
+        <MappingFragment StoreEntitySet="FlowMatrices">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Matrix" ColumnName="Matrix" />
+          <ScalarProperty Name="N" ColumnName="N" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Parameters">
+      <EntityTypeMapping TypeName="AlgorithmDbModel.Parameter">
+        <MappingFragment StoreEntitySet="Parameters">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="PheromoneInc" ColumnName="PheromoneInc" />
+          <ScalarProperty Name="ExtraPheromoneInc" ColumnName="ExtraPheromoneInc" />
+          <ScalarProperty Name="AntsNumber" ColumnName="AntsNumber" />
+          <ScalarProperty Name="NoUpdatesLimit" ColumnName="NoUpdatesLimit" />
+          <ScalarProperty Name="IterationsNumber" ColumnName="IterationsNumber" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ResultsInfoes">
+      <EntityTypeMapping TypeName="AlgorithmDbModel.ResultsInfo">
+        <MappingFragment StoreEntitySet="ResultsInfo">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Result" ColumnName="Result" />
+          <ScalarProperty Name="PathCost" ColumnName="PathCost" />
+          <ScalarProperty Name="ParametersId" ColumnName="ParametersId" />
+          <ScalarProperty Name="DistMatrixId" ColumnName="DistMatrixId" />
+          <ScalarProperty Name="FlowMatrixId" ColumnName="FlowMatrixId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

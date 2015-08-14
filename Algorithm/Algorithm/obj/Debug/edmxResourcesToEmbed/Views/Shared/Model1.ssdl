@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="AlgorithmDbModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="AlgorithmDbModelStoreContainer">
+    <EntitySet Name="DistMatrices" EntityType="AlgorithmDbModel.Store.DistMatrices" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="FlowMatrices" EntityType="AlgorithmDbModel.Store.FlowMatrices" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Parameters" EntityType="AlgorithmDbModel.Store.Parameters" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ResultsInfo" EntityType="AlgorithmDbModel.Store.ResultsInfo" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="DistMatrixId" Association="AlgorithmDbModel.Store.DistMatrixId">
+      <End Role="DistMatrices" EntitySet="DistMatrices" />
+      <End Role="ResultsInfo" EntitySet="ResultsInfo" />
+    </AssociationSet>
+    <AssociationSet Name="FlowMatrixId" Association="AlgorithmDbModel.Store.FlowMatrixId">
+      <End Role="FlowMatrices" EntitySet="FlowMatrices" />
+      <End Role="ResultsInfo" EntitySet="ResultsInfo" />
+    </AssociationSet>
+    <AssociationSet Name="ParametersId" Association="AlgorithmDbModel.Store.ParametersId">
+      <End Role="Parameters" EntitySet="Parameters" />
+      <End Role="ResultsInfo" EntitySet="ResultsInfo" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="DistMatrices">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Matrix" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="N" Type="int" />
+  </EntityType>
+  <EntityType Name="FlowMatrices">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Matrix" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="N" Type="int" />
+  </EntityType>
+  <EntityType Name="Parameters">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="PheromoneInc" Type="int" Nullable="false" />
+    <Property Name="ExtraPheromoneInc" Type="int" Nullable="false" />
+    <Property Name="AntsNumber" Type="int" Nullable="false" />
+    <Property Name="NoUpdatesLimit" Type="int" Nullable="false" />
+    <Property Name="IterationsNumber" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ResultsInfo">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Result" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PathCost" Type="int" Nullable="false" />
+    <Property Name="ParametersId" Type="int" Nullable="false" />
+    <Property Name="DistMatrixId" Type="int" Nullable="false" />
+    <Property Name="FlowMatrixId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="DistMatrixId">
+    <End Role="DistMatrices" Type="AlgorithmDbModel.Store.DistMatrices" Multiplicity="1" />
+    <End Role="ResultsInfo" Type="AlgorithmDbModel.Store.ResultsInfo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="DistMatrices">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ResultsInfo">
+        <PropertyRef Name="DistMatrixId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FlowMatrixId">
+    <End Role="FlowMatrices" Type="AlgorithmDbModel.Store.FlowMatrices" Multiplicity="1" />
+    <End Role="ResultsInfo" Type="AlgorithmDbModel.Store.ResultsInfo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="FlowMatrices">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ResultsInfo">
+        <PropertyRef Name="FlowMatrixId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ParametersId">
+    <End Role="Parameters" Type="AlgorithmDbModel.Store.Parameters" Multiplicity="1" />
+    <End Role="ResultsInfo" Type="AlgorithmDbModel.Store.ResultsInfo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Parameters">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ResultsInfo">
+        <PropertyRef Name="ParametersId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

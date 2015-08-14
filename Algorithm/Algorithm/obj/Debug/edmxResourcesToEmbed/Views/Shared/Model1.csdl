@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="AlgorithmDbModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="AlgorithmDbEntities" p1:LazyLoadingEnabled="true">
+    <EntitySet Name="DistMatrices" EntityType="AlgorithmDbModel.DistMatrix" />
+    <EntitySet Name="FlowMatrices" EntityType="AlgorithmDbModel.FlowMatrix" />
+    <EntitySet Name="Parameters" EntityType="AlgorithmDbModel.Parameter" />
+    <EntitySet Name="ResultsInfoes" EntityType="AlgorithmDbModel.ResultsInfo" />
+    <AssociationSet Name="DistMatrixId" Association="AlgorithmDbModel.DistMatrixId">
+      <End Role="DistMatrices" EntitySet="DistMatrices" />
+      <End Role="ResultsInfo" EntitySet="ResultsInfoes" />
+    </AssociationSet>
+    <AssociationSet Name="FlowMatrixId" Association="AlgorithmDbModel.FlowMatrixId">
+      <End Role="FlowMatrices" EntitySet="FlowMatrices" />
+      <End Role="ResultsInfo" EntitySet="ResultsInfoes" />
+    </AssociationSet>
+    <AssociationSet Name="ParametersId" Association="AlgorithmDbModel.ParametersId">
+      <End Role="Parameters" EntitySet="Parameters" />
+      <End Role="ResultsInfo" EntitySet="ResultsInfoes" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="DistMatrix">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="Matrix" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="N" Type="Int32" />
+  </EntityType>
+  <EntityType Name="FlowMatrix">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="Matrix" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="N" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Parameter">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="PheromoneInc" Type="Int32" Nullable="false" />
+    <Property Name="ExtraPheromoneInc" Type="Int32" Nullable="false" />
+    <Property Name="AntsNumber" Type="Int32" Nullable="false" />
+    <Property Name="NoUpdatesLimit" Type="Int32" Nullable="false" />
+    <Property Name="IterationsNumber" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ResultsInfo">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="Result" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="PathCost" Type="Int32" Nullable="false" />
+    <Property Name="ParametersId" Type="Int32" Nullable="false" />
+    <Property Name="DistMatrixId" Type="Int32" Nullable="false" />
+    <Property Name="FlowMatrixId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="DistMatrix" Relationship="AlgorithmDbModel.DistMatrixId" FromRole="ResultsInfo" ToRole="DistMatrices" />
+    <NavigationProperty Name="FlowMatrix" Relationship="AlgorithmDbModel.FlowMatrixId" FromRole="ResultsInfo" ToRole="FlowMatrices" />
+    <NavigationProperty Name="Parameter" Relationship="AlgorithmDbModel.ParametersId" FromRole="ResultsInfo" ToRole="Parameters" />
+  </EntityType>
+  <Association Name="DistMatrixId">
+    <End Role="DistMatrices" Type="AlgorithmDbModel.DistMatrix" Multiplicity="1" />
+    <End Role="ResultsInfo" Type="AlgorithmDbModel.ResultsInfo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="DistMatrices">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ResultsInfo">
+        <PropertyRef Name="DistMatrixId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FlowMatrixId">
+    <End Role="FlowMatrices" Type="AlgorithmDbModel.FlowMatrix" Multiplicity="1" />
+    <End Role="ResultsInfo" Type="AlgorithmDbModel.ResultsInfo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="FlowMatrices">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ResultsInfo">
+        <PropertyRef Name="FlowMatrixId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ParametersId">
+    <End Role="Parameters" Type="AlgorithmDbModel.Parameter" Multiplicity="1" />
+    <End Role="ResultsInfo" Type="AlgorithmDbModel.ResultsInfo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Parameters">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ResultsInfo">
+        <PropertyRef Name="ParametersId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

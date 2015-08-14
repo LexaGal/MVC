@@ -1,51 +1,72 @@
-﻿using System.Linq;
+﻿using System;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Transactions;
 using Algorithm.Database;
+using Algorithm.DomainModels;
 using Algorithm.Repository.Abstract;
+using log4net;
+using PostSharp.Patterns.Diagnostics;
+using PostSharp.Extensibility;
 
 namespace Algorithm.Repository.Concrete
 {
-    public abstract class Repository<T> : IRepository<T> where T: class 
+    public class Repository<T> : IRepository<T> where T: class
     {
-        private AlgorithmDb _context = new AlgorithmDb();
+        protected AlgorithmDb Context = new AlgorithmDb();
+        protected string ConnectionString = ConfigurationManager.ConnectionStrings["AlgorithmDb"].ConnectionString;
         public IQueryable<T> GetAll()
         {
-            return _context.Set<T>().AsQueryable();
+            MvcApplication.Log.Info("E");
+            return Context.Set<T>().AsQueryable();
         }
 
         public T Get(int id)
         {
-            return _context.Set<T>().Find(id);
+            return Context.Set<T>().Find(id);
         }
 
         public bool Add(T value)
         {
-            _context.Set<T>().Add(value);
-            _context.SaveChanges();
-            return true;
-        }
-
-        public bool Edit(T value)
-        {
-            T result = _context.Set<T>().First(v => v == value);
-            if (result != null)
+            using (var scope = new TransactionScope(TransactionScopeOption.Required))
             {
-                result = value;
-                _context.SaveChanges();
+                Context.Set<T>().Add(value);
+                Context.SaveChanges();
+                Dispose();
+                scope.Complete();
                 return true;
             }
-            return false;
+        }
+
+        public bool Edit(int id, T value)
+        {
+            return true;
         }
 
         public bool Delete(int id)
         {
-            _context.Set<T>().Remove(_context.Set<T>().Find(id));
-            _context.SaveChanges();
-            return true;
+            using (var scope = new TransactionScope(TransactionScopeOption.Required))
+            {
+                T t = Context.Set<T>().Find(id);
+                if (t != null)
+                {
+                    Context.Set<T>().Remove(t);
+                    Context.SaveChanges();
+                    Dispose();
+                    scope.Complete();
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void Dispose()
         {
+            if (Context != null)
+            {
+                Context.Dispose();
+            }
         }
-
     }
 }
