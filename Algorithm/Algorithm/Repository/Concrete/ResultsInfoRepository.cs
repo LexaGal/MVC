@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Data;
+using System.Linq;
 using System.Transactions;
+using Algorithm.AOPAttributes;
 using Algorithm.Database;
 using Algorithm.DomainModels;
 using Algorithm.Repository.Abstract;
@@ -8,11 +11,10 @@ namespace Algorithm.Repository.Concrete
 {
     public class ResultsInfoRepository : Repository<ResultInfo>, IResultsInfoRepository
     {
+        [RunInTransactionAspect]
         public new bool Add(ResultInfo value)
         {
-            using (var scope = new TransactionScope(TransactionScopeOption.Required))
-            {
-                ResultInfo ri = Context.ResultsInfo
+           ResultInfo ri = Context.ResultsInfo
                     .SingleOrDefault(r =>
                         r.ParametersId == value.ParametersId &&
                         r.DistMatrixId == value.DistMatrixId &&
@@ -22,31 +24,24 @@ namespace Algorithm.Repository.Concrete
                 {
                     Context.ResultsInfo.Add(value);
                     Context.SaveChanges();
-                    Dispose();
-                    scope.Complete();
                     return true;
                 }
-                if (Edit(ri.Id, value))
-                {
-                    return true;
-                }
+            if (Edit(ri.Id, value))
+            {
+                return true;
             }
             return false;
         }
 
+        [RunInTransactionAspect]
         public new bool Edit(int id, ResultInfo value)
         {
-            using (var scope = new TransactionScope(TransactionScopeOption.Required))
+            ResultInfo ri = Context.ResultsInfo.Find(id);
+            if (ri != null)
             {
-                ResultInfo ri = Context.ResultsInfo.Find(id);
-                if (ri != null)
-                {
-                    ri.CopyFrom(value);
-                    Context.SaveChanges();
-                    Dispose();
-                    scope.Complete();
-                    return true;
-                }
+                ri.CopyFrom(value);
+                Context.SaveChanges();
+                return true;
             }
             return false;
         }

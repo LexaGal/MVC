@@ -167,6 +167,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AOPAttributes\RunInTransactionAspect.cs" />
+    <Compile Include="AOPAttributes\ExceptionAspect.cs" />
+    <Compile Include="AOPAttributes\LogAspect.cs" />
+    <Compile Include="AOPAttributes\TimingAspect.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />

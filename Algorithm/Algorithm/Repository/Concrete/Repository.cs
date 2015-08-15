@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
+using Algorithm.AOPAttributes;
 using Algorithm.Database;
 using Algorithm.DomainModels;
 using Algorithm.Repository.Abstract;
@@ -16,9 +17,9 @@ namespace Algorithm.Repository.Concrete
     {
         protected AlgorithmDb Context = new AlgorithmDb();
         protected string ConnectionString = ConfigurationManager.ConnectionStrings["AlgorithmDb"].ConnectionString;
+
         public IQueryable<T> GetAll()
         {
-            MvcApplication.Log.Info("E");
             return Context.Set<T>().AsQueryable();
         }
 
@@ -27,16 +28,12 @@ namespace Algorithm.Repository.Concrete
             return Context.Set<T>().Find(id);
         }
 
+        [RunInTransactionAspect]
         public bool Add(T value)
         {
-            using (var scope = new TransactionScope(TransactionScopeOption.Required))
-            {
-                Context.Set<T>().Add(value);
-                Context.SaveChanges();
-                Dispose();
-                scope.Complete();
-                return true;
-            }
+            Context.Set<T>().Add(value);
+            Context.SaveChanges();
+            return true;
         }
 
         public bool Edit(int id, T value)
@@ -44,19 +41,15 @@ namespace Algorithm.Repository.Concrete
             return true;
         }
 
+        [RunInTransactionAspect]
         public bool Delete(int id)
         {
-            using (var scope = new TransactionScope(TransactionScopeOption.Required))
+            T t = Context.Set<T>().Find(id);
+            if (t != null)
             {
-                T t = Context.Set<T>().Find(id);
-                if (t != null)
-                {
-                    Context.Set<T>().Remove(t);
-                    Context.SaveChanges();
-                    Dispose();
-                    scope.Complete();
-                    return true;
-                }
+                Context.Set<T>().Remove(t);
+                Context.SaveChanges();
+                return true;
             }
             return false;
         }
