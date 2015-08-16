@@ -43,9 +43,15 @@
 }
 <button id="saveFlowMatrixId">Save</button>
 <br/>
+<select id="selectTypeId">
+    <option>Parameters</option>
+    <option>DistMatrix</option>
+    <option>FlowMatrix</option>
+</select>
 
 <button id="go">Go</button><br/>
 <textarea id="textareaResultId" style="font-size: x-small" cols="30" rows="25"></textarea>
+
 <script type="text/javascript">
     var parametersId;
     var distMatrixId;
@@ -122,7 +128,10 @@
             type: "POST",
             url: '@Url.Action("ProcessChoosenItems", "Home")',
             traditional: true,
-            data: { parametersId: parametersId, distMatrixId: distMatrixId, flowMatrixId: flowMatrixId },
+            data: { parametersId: parametersId,
+                distMatrixId: distMatrixId,
+                flowMatrixId: flowMatrixId,
+                type: $('#selectTypeId').find(":selected").text() },
             success: function(data) {
                 $('#textareaResultId').text(data);
             },
@@ -131,4 +140,5 @@
             }
         });
     });
+
 </script>

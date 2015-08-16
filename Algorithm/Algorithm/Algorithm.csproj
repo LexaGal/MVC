@@ -87,6 +87,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
@@ -167,6 +168,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AOPAttributes\Caching\CacheableResultAttribute.cs" />
+    <Compile Include="AOPAttributes\Caching\MethodResultCache.cs" />
     <Compile Include="AOPAttributes\RunInTransactionAspect.cs" />
     <Compile Include="AOPAttributes\ExceptionAspect.cs" />
     <Compile Include="AOPAttributes\LogAspect.cs" />

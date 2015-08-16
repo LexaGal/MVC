@@ -19,23 +19,22 @@ namespace Algorithm.Controllers
     public class HomeController : Controller
     {
         private IAlgorithm _algorithm;
-        private IParametersRepository _parametersRepository;
-        private IDistMatricesRepository _distMatricesRepository;
-        private IFlowMatricesRepository _flowMatricesRepository;
-        private IResultsInfoRepository _resultsInfoRepository;
+        private readonly IParametersRepository _parametersRepository;
+        private readonly IDistMatricesRepository _distMatricesRepository;
+        private readonly IFlowMatricesRepository _flowMatricesRepository;
+        private readonly ResultsInfoRepository _resultsInfoRepository;
        
         public HomeController(IAlgorithm algorithm,
             IParametersRepository parametersRepository,
             IDistMatricesRepository distMatricesRepository,
             IFlowMatricesRepository flowMatricesRepository,
-            IResultsInfoRepository resultsInfoRepository)
+            ResultsInfoRepository resultsInfoRepository)
         {
             _algorithm = algorithm;
             _flowMatricesRepository = flowMatricesRepository;
             _distMatricesRepository = distMatricesRepository;
             _parametersRepository = parametersRepository;
             _resultsInfoRepository = resultsInfoRepository;
-            Parameters p = _parametersRepository.Get(1);
         }
 
 
@@ -111,7 +110,6 @@ namespace Algorithm.Controllers
         {
             var jss = new JavaScriptSerializer();
             GraphViewModel graphViewModel = jss.Deserialize<GraphViewModel>(graphString);
-
             //???
 
             FileRepository repository = new FileRepository();
@@ -236,8 +234,9 @@ namespace Algorithm.Controllers
             return new HtmlString(result);
         }
 
-        public HtmlString ProcessChoosenItems(string parametersId, string distMatrixId, string flowMatrixId)
+        public HtmlString ProcessChoosenItems(string parametersId, string distMatrixId, string flowMatrixId, string type)
         {
+            IQueryable<ResultInfo> infos = _resultsInfoRepository.GetAllById(Convert.ToInt32(parametersId), type);
             Parameters parameters = _parametersRepository.Get(Convert.ToInt32(parametersId));
             DistMatrix distMatrix = _distMatricesRepository.Get(Convert.ToInt32(distMatrixId));
             FlowMatrix flowMatrix = _flowMatricesRepository.Get(Convert.ToInt32(flowMatrixId));

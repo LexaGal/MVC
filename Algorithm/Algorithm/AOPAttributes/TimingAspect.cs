@@ -20,7 +20,7 @@ namespace Algorithm.AOPAttributes
 
         public override void OnExit(MethodExecutionArgs args)
         {
-            Console.WriteLine("[{0}] took {1}ms to execute", new StackTrace().GetFrame(1).GetMethod().Name, _stopWatch.ElapsedMilliseconds);
+            MvcApplication.Log.Info(args.Method + " [Elapsed time: " + _stopWatch.ElapsedMilliseconds + ']'); 
             base.OnExit(args);
         }
     }
