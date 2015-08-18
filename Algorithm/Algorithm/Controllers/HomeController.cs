@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Algorithm.AOPAttributes;
 using Algorithm.DomainModels;
 using Algorithm.HelpMethods;
 using Algorithm.Models;
@@ -16,6 +18,7 @@ using Grsu.Lab.Aoc.Contracts;
 
 namespace Algorithm.Controllers
 {
+    [AuthentificationAspect]
     public class HomeController : Controller
     {
         private IAlgorithm _algorithm;
@@ -236,7 +239,7 @@ namespace Algorithm.Controllers
 
         public HtmlString ProcessChoosenItems(string parametersId, string distMatrixId, string flowMatrixId, string type)
         {
-            IQueryable<ResultInfo> infos = _resultsInfoRepository.GetAllById(Convert.ToInt32(parametersId), type);
+            IList<ResultInfo> infos = _resultsInfoRepository.GetAllById(Convert.ToInt32(parametersId), type);
             Parameters parameters = _parametersRepository.Get(Convert.ToInt32(parametersId));
             DistMatrix distMatrix = _distMatricesRepository.Get(Convert.ToInt32(distMatrixId));
             FlowMatrix flowMatrix = _flowMatricesRepository.Get(Convert.ToInt32(flowMatrixId));

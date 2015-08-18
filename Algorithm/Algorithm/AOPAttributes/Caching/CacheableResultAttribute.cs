@@ -15,9 +15,7 @@ namespace Algorithm.AOPAttributes.Caching
                 args.ReturnValue = result;
                 return;
             }
-
             base.OnInvoke(args);
-
             cache.CacheCallResult(args.ReturnValue, args.Arguments);
         }
     }

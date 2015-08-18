@@ -1,17 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Transactions;
 using Algorithm.AOPAttributes;
 using Algorithm.AOPAttributes.Caching;
+using Algorithm.Authentication;
 using Algorithm.Database;
 using Algorithm.DomainModels;
 using Algorithm.Repository.Abstract;
 
 namespace Algorithm.Repository.Concrete
 {
+    [AuthentificationAspect]
+    [LogAspect]
     public class ResultsInfoRepository : Repository<ResultInfo>, IResultsInfoRepository
     {
+        
         [RunInTransactionAspect]
         public new bool Add(ResultInfo value)
         {
@@ -47,20 +52,19 @@ namespace Algorithm.Repository.Concrete
             return false;
         }
 
-        [TimingAspect]
         [CacheableResult]
-        public IQueryable<ResultInfo> GetAllById(int id, string type)
+        public IList<ResultInfo> GetAllById(int id, string type)
         {
             switch (type)
             {
                 case "Parameters":
-                    return Context.ResultsInfo.Where(ri => ri.ParametersId == id).AsQueryable();
-
-                case "DistMatrix":
-                    return Context.ResultsInfo.Where(ri => ri.DistMatrixId == id).AsQueryable();
-
-                case "FlowMatrix":
-                    return Context.ResultsInfo.Where(ri => ri.FlowMatrixId == id).AsQueryable();
+                    return Context.ResultsInfo.Where(ri => ri.ParametersId == id).ToList();
+                                                                                 
+                case "DistMatrix":                                               
+                    return Context.ResultsInfo.Where(ri => ri.DistMatrixId == id).ToList();
+                                                                                 
+                case "FlowMatrix":                                               
+                    return Context.ResultsInfo.Where(ri => ri.FlowMatrixId == id).ToList();
             }
             return null;
         }

@@ -28,6 +28,8 @@ namespace Algorithm.Repository.Concrete
             return Context.Set<T>().Find(id);
         }
 
+        [AuthentificationAspect]
+        [LogAspect]
         [RunInTransactionAspect]
         public bool Add(T value)
         {
@@ -41,6 +43,8 @@ namespace Algorithm.Repository.Concrete
             return true;
         }
 
+        [AuthentificationAspect]
+        [LogAspect]
         [RunInTransactionAspect]
         public bool Delete(int id)
         {

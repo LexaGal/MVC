@@ -1,4 +1,5 @@
-﻿using Algorithm.Repository.Abstract;
+﻿using Algorithm.Authentication;
+using Algorithm.Repository.Abstract;
 using Algorithm.Repository.Concrete;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
@@ -19,6 +20,8 @@ namespace Algorithm.Unity
                 _container.RegisterType<IDistMatricesRepository, DistMatricesRepository>();
                 _container.RegisterType<IFlowMatricesRepository, FlowMatricesRepository>();
                 _container.RegisterType<IResultsInfoRepository, ResultsInfoRepository>();
+                _container.RegisterType<IClientsRepository, ClientsRepository>();
+                _container.RegisterType<IAuthProvider, AuthProvider>(new InjectionConstructor(typeof (IClientsRepository)));
                 return _container;
             }
 

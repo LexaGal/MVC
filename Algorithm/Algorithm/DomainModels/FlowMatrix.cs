@@ -32,7 +32,7 @@ namespace Algorithm.DomainModels
                 builder.Append(String.Format("Flows Matrix: {0},\n", N));
                 builder.Append(Matrix);
                 return builder.ToString();
-            }
+            }   
         }
     }
 }

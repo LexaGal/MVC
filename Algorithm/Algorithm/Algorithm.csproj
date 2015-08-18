@@ -170,6 +170,7 @@
   <ItemGroup>
     <Compile Include="AOPAttributes\Caching\CacheableResultAttribute.cs" />
     <Compile Include="AOPAttributes\Caching\MethodResultCache.cs" />
+    <Compile Include="AOPAttributes\AuthentificationAspect.cs" />
     <Compile Include="AOPAttributes\RunInTransactionAspect.cs" />
     <Compile Include="AOPAttributes\ExceptionAspect.cs" />
     <Compile Include="AOPAttributes\LogAspect.cs" />
@@ -180,7 +181,13 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\UnityMvcActivator.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Authentication\AuthProvider.cs" />
+    <Compile Include="Authentication\IAuthProvider.cs" />
+    <Compile Include="Authentication\Client.cs" />
+    <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Converter\IConverter.cs" />
+    <Compile Include="Converter\TypeConverter.cs" />
     <Compile Include="Database\AlgorithmDb.cs" />
     <Compile Include="DomainModels\DistMatrix.cs" />
     <Compile Include="DomainModels\FlowMatrix.cs" />
@@ -194,6 +201,8 @@
     <Compile Include="Models\InputParametersViewModel.cs" />
     <Compile Include="Models\GraphViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\Abstract\IClientsRepository.cs" />
+    <Compile Include="Repository\Concrete\ClientsRepository.cs" />
     <Compile Include="Repository\Concrete\DistMatricesRepository.cs" />
     <Compile Include="Repository\Concrete\FlowMatricesRepository.cs" />
     <Compile Include="Repository\Abstract\IParametersRepository.cs" />
@@ -301,6 +310,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\DatabasePage.cshtml" />
     <Content Include="Views\Home\DatabaseItems.cshtml" />
+    <None Include="Views\Auth\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -314,6 +324,7 @@
       <Name>AntsLibrary</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
