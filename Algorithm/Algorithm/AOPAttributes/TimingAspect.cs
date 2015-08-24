@@ -15,13 +15,11 @@ namespace Algorithm.AOPAttributes
         public override void OnEntry(MethodExecutionArgs args)
         {
             _stopWatch = Stopwatch.StartNew();
-            base.OnEntry(args);
         }
 
         public override void OnExit(MethodExecutionArgs args)
         {
             MvcApplication.Log.Info(args.Method + " [Elapsed time: " + _stopWatch.ElapsedMilliseconds + ']'); 
-            base.OnExit(args);
         }
     }
 }

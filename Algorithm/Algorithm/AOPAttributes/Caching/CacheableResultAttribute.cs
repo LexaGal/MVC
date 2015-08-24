@@ -4,7 +4,7 @@ using PostSharp.Aspects;
 namespace Algorithm.AOPAttributes.Caching
 {
     [Serializable]
-    internal class CacheableResultAttribute : MethodInterceptionAspect
+    public class CacheableResultAttribute : MethodInterceptionAspect
     {
         public override void OnInvoke(MethodInterceptionArgs args)
         {

@@ -71,5 +71,9 @@ C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\PostSharp.Patterns.Di
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\log4net.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\PostSharp.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\PostSharp.Patterns.Diagnostics.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Iesi.Collections.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\NHibernate.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Iesi.Collections.xml
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\NHibernate.xml
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\bin\Algorithm.pssym
 C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Algorithm\obj\Debug\Algorithm.dll.postsharp

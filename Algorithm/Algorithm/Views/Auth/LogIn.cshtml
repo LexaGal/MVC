@@ -1,4 +1,4 @@
-﻿@model Algorithm.Authentication.Client
+﻿@model Algorithm.Authentication.LoginModel
 
 @{
     ViewBag.Title = "LogIn";
@@ -6,7 +6,7 @@
 
 <h2>Log In</h2>
 
-@using (Html.BeginForm("Index", "Auth"))
+@using (Html.BeginForm("LogIn", "Auth"))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
@@ -37,6 +37,7 @@
     </fieldset>
 }
 
+@Html.ActionLink("Register", "Register", "Auth")
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

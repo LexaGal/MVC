@@ -1,0 +1,14 @@
+﻿@model IEnumerable<Algorithm.NHibernate.Employee>
+
+@{
+    ViewBag.Title = "title";
+}
+
+@foreach (var m in Model)
+{
+    <div>
+        @Html.DisplayFor(model => m.FirstName)
+        @Html.DisplayFor(model => m.LastName)
+        @Html.DisplayFor(model => m.Designation)
+    </div>
+}

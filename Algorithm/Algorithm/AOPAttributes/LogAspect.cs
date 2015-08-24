@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using System.Transactions;
-using System.Web;
+using System.Web.Mvc;
+using Algorithm.AOPAttributes.Caching;
+using Algorithm.Authentication;
 using Algorithm.Converter;
-using Algorithm.DomainModels;
 using PostSharp.Aspects;
-using WebGrease.Css.Extensions;
+using PostSharp.Aspects.Dependencies;
 
 namespace Algorithm.AOPAttributes
 {
     [Serializable]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(CacheableResultAttribute))]
     public class LogAspect : OnMethodBoundaryAspect
     {
         [NonSerialized]
@@ -23,45 +21,59 @@ namespace Algorithm.AOPAttributes
 
         public override void OnEntry(MethodExecutionArgs args)
         {
-            TypeConverter typeConverter = new TypeConverter();
-            _stopWatch = Stopwatch.StartNew();
-            _stringBuilder = new StringBuilder().AppendFormat("{0} [", args.Method.Name);
-
-            for (int index = 0; index < args.Arguments.Count; index++)
+            if (args.Method.Name == "OnException")
             {
-                var arg = args.Arguments.GetArgument(index);
-                _stringBuilder.AppendFormat("({0}: {1}) ", args.Method.GetParameters()[index].ParameterType.Name,
-                    typeConverter.GetStringView(args.Method.GetParameters()[index].ParameterType.Name, arg));
+                OnException(args);
+                return;
             }
-            MvcApplication.Log.Info(_stringBuilder.Append(']').ToString());
-            base.OnEntry(args);
+
+            if (!args.Method.IsConstructor)
+            {
+                _stopWatch = Stopwatch.StartNew();
+                _stringBuilder = new StringBuilder();
+
+                for (int index = 0; index < args.Arguments.Count; index++)
+                {
+                    var arg = args.Arguments.GetArgument(index);
+                    _stringBuilder.AppendFormat("({0}: {1}) ", args.Method.GetParameters()[index].ParameterType.Name,
+                        TypeConverter.GetStringView(args.Method.GetParameters()[index].ParameterType.Name, arg));
+                }
+                MvcApplication.Log.InfoFormat("{0} [{1}]", args.Method.Name, _stringBuilder);
+            }
         }
 
         public override void OnSuccess(MethodExecutionArgs args)
         {
-            TypeConverter typeConverter = new TypeConverter();
-            _stringBuilder = new StringBuilder().AppendFormat("{0} [", args.ReturnValue);
-
-            if (args.ReturnValue.GetType().IsGenericType)
+            if (args.Method.Name == "Edit" || args.Method.Name == "Add" || args.Method.Name == "Delete")
             {
-                var objects = args.ReturnValue as List<ResultInfo>;
-
-                for (int index = 0; index < objects.Count; index++)
-                {
-                    var arg = objects[index];
-                    _stringBuilder.AppendFormat("({0}: {1}) ", index + 1,
-                        typeConverter.GetStringView("ResultInfo", arg));
-                }
-                MvcApplication.Log.Info(_stringBuilder.Append(']') + " [Elapsed time: " + _stopWatch.ElapsedMilliseconds + ']');
-                return;
+                MethodResultCache.ClearAllCachedResults();
             }
-            MvcApplication.Log.Info(args.ReturnValue + " [Elapsed time: " + _stopWatch.ElapsedMilliseconds + ']');
+
+            if (!args.Method.IsConstructor && args.ReturnValue.GetType().Name != typeof(RedirectResult).Name)
+            {
+                if (args.ReturnValue != null)
+                {
+                    if (args.ReturnValue.GetType().IsGenericType)
+                    {
+                        string stringView = TypeConverter.GetStringView(args.ReturnValue.GetType().FullName, args.ReturnValue);
+                        MvcApplication.Log.Info(string.Format("{0} {1} [Elapsed time: {2}]", args.Method.Name, stringView, _stopWatch.ElapsedMilliseconds));
+                        return;
+                    }
+                    MvcApplication.Log.Info(string.Format("{0} {1} [Elapsed time: {2}]", args.Method.Name, args.ReturnValue, _stopWatch.ElapsedMilliseconds));
+                }
+            }
         }
 
         public override void OnException(MethodExecutionArgs args)
         {
             args.FlowBehavior = FlowBehavior.Continue;
-            MvcApplication.Log.Error(args.Exception.Message, args.Exception);
+            if (args.Exception != null)
+            {
+                MvcApplication.Log.Error(args.Exception.Message, args.Exception);
+                return;
+            }
+            var e = new AuthenticationException();
+            MvcApplication.Log.Error(e.Message, e);
         }
     }
 }

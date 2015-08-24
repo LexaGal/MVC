@@ -12,11 +12,10 @@ using Algorithm.Repository.Abstract;
 
 namespace Algorithm.Repository.Concrete
 {
-    [AuthentificationAspect]
+    [AuthentificationAspect]   
     [LogAspect]
     public class ResultsInfoRepository : Repository<ResultInfo>, IResultsInfoRepository
     {
-        
         [RunInTransactionAspect]
         public new bool Add(ResultInfo value)
         {
@@ -30,6 +29,7 @@ namespace Algorithm.Repository.Concrete
             {
                 Context.ResultsInfo.Add(value);
                 Context.SaveChanges();
+                Dispose();
                 return true;
             }
             if (Edit(ri.Id, value))
@@ -47,24 +47,25 @@ namespace Algorithm.Repository.Concrete
             {
                 ri.CopyFrom(value);
                 Context.SaveChanges();
+                Dispose();
                 return true;
             }
             return false;
         }
 
         [CacheableResult]
-        public IList<ResultInfo> GetAllById(int id, string type)
+        public IList<ResultInfo> GetAllById(int parametersId, int distMatrixId, int flowMatrixId, string type)
         {
             switch (type)
             {
                 case "Parameters":
-                    return Context.ResultsInfo.Where(ri => ri.ParametersId == id).ToList();
+                    return Context.ResultsInfo.Where(ri => ri.ParametersId == parametersId).ToList();
                                                                                  
                 case "DistMatrix":                                               
-                    return Context.ResultsInfo.Where(ri => ri.DistMatrixId == id).ToList();
+                    return Context.ResultsInfo.Where(ri => ri.DistMatrixId == distMatrixId).ToList();
                                                                                  
                 case "FlowMatrix":                                               
-                    return Context.ResultsInfo.Where(ri => ri.FlowMatrixId == id).ToList();
+                    return Context.ResultsInfo.Where(ri => ri.FlowMatrixId == flowMatrixId).ToList();
             }
             return null;
         }

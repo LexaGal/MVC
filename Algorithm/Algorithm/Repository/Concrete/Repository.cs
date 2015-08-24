@@ -29,22 +29,23 @@ namespace Algorithm.Repository.Concrete
         }
 
         [AuthentificationAspect]
-        [LogAspect]
+        [LogAspect] 
         [RunInTransactionAspect]
         public bool Add(T value)
         {
             Context.Set<T>().Add(value);
             Context.SaveChanges();
+            Dispose();
             return true;
         }
 
         public bool Edit(int id, T value)
-        {
+        {       
             return true;
         }
 
         [AuthentificationAspect]
-        [LogAspect]
+        [LogAspect] 
         [RunInTransactionAspect]
         public bool Delete(int id)
         {
@@ -53,6 +54,7 @@ namespace Algorithm.Repository.Concrete
             {
                 Context.Set<T>().Remove(t);
                 Context.SaveChanges();
+                Dispose();
                 return true;
             }
             return false;

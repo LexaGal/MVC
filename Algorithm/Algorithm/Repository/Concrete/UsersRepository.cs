@@ -7,7 +7,7 @@ using Algorithm.Repository.Abstract;
 
 namespace Algorithm.Repository.Concrete
 {
-    public class ClientsRepository : Repository<Client>, IClientsRepository
+    public class UsersRepository : Repository<User>, IUsersRepository
     {
     }
 }

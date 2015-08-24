@@ -6,7 +6,7 @@ using Algorithm.Authentication;
 
 namespace Algorithm.Repository.Abstract
 {
-    public interface IClientsRepository : IRepository<Client>
+    public interface IUsersRepository : IRepository<User>
     {
     }
 }

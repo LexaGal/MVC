@@ -12,7 +12,7 @@ namespace Algorithm.Database
         public DbSet<DistMatrix> DistMatrices { get; set; }
         public DbSet<FlowMatrix> FlowMatrices { get; set; }
         public DbSet<ResultInfo> ResultsInfo { get; set; }
-        public DbSet<Client> Clients { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace Algorithm.Database
             modelBuilder.Entity<DistMatrix>().ToTable("DistMatrices");
             modelBuilder.Entity<FlowMatrix>().ToTable("FlowMatrices");
             modelBuilder.Entity<ResultInfo>().ToTable("ResultsInfo");
-            modelBuilder.Entity<Client>().ToTable("Clients");
+            modelBuilder.Entity<User>().ToTable("Users");
         }
     }
 }

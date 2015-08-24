@@ -6,14 +6,14 @@ using System.Runtime.Caching;
 
 namespace Algorithm.AOPAttributes.Caching
 {
-    class MethodResultCache
+    public class MethodResultCache
     {
         private readonly string _methodName;
         private MemoryCache _cache;
         private readonly TimeSpan _expirationPeriod;
         private static readonly Dictionary<string, MethodResultCache> MethodCaches = new Dictionary<string, MethodResultCache>();
 
-        public MethodResultCache(string methodName, int expirationPeriod = 30)
+        public MethodResultCache(string methodName, int expirationPeriod = 10)
         {
             _methodName = methodName;
             _expirationPeriod = new TimeSpan(0, 0, expirationPeriod, 0);
@@ -39,10 +39,15 @@ namespace Algorithm.AOPAttributes.Caching
             return _cache.Get(GetCacheKey(arguments));
         }
 
-        public void ClearCachedResults()
+        public void ClearCachedResult()
         {
             _cache.Dispose();
             _cache = new MemoryCache(_methodName);
+        }
+
+        public static void ClearAllCachedResults()
+        {
+            MethodCaches.Clear();
         }
 
         public static MethodResultCache GetCache(string methodName)

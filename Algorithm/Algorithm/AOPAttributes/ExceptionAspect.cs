@@ -13,7 +13,6 @@ namespace Algorithm.AOPAttributes
         {
             args.FlowBehavior = FlowBehavior.Continue;
             MvcApplication.Log.Error(args.Method, args.Exception);
-            base.OnException(args);
         }
     }
 }

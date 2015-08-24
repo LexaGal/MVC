@@ -5,7 +5,7 @@
 
 <textarea id="textareaParametersId" style="font-size: x-small" rows="13" cols="30"></textarea>
 <textarea id="textareaDistMatrixId" style="font-size: x-small; position: absolute" rows="13" cols="75"></textarea>
-<textarea id="textareaFlowMatrixId" style="font-size: x-small; position: absolute; margin-left: 430px" rows="13" cols="75"></textarea>
+<textarea id="textareaFlowMatrixId" style="font-size: x-small; position: absolute; margin-left: 400px" rows="13" cols="75"></textarea>
 
 <br/>Parameters:
 @{
@@ -49,9 +49,11 @@
     <option>FlowMatrix</option>
 </select>
 
+<br/>
 <button id="go">Go</button><br/>
+<button id="get">Get</button><br/>
 <textarea id="textareaResultId" style="font-size: x-small" cols="30" rows="25"></textarea>
-@Html.ActionLink("Log Out", "Index", "Auth")
+@Html.ActionLink("Log Out", "LogOut", "Auth")
 
 <script type="text/javascript">
     var parametersId;
@@ -67,24 +69,24 @@
             type: "POST",
             url: '@Url.Action("SaveChoosenItem", "Home")',
             traditional: true,
-            data: { type : type, text : $('#textarea' + type + 'Id').val() },
-            success: function (data) {
+            data: { type: type, text: $('#textarea' + type + 'Id').val() },
+            success: function(data) {
                 alert(data);
             },
-            error: function () {
+            error: function() {
                 alert(data);
             }
         });
     });
 
-    $('[id^=buttonParametersId').click(function (e) {
+    $('[id^=buttonParametersId').click(function(e) {
         e.preventDefault();
         parametersId = $(this).attr('id').substring(18, $(this).attr('id').length);
-        $('[id^=buttonParametersId').each(function () {
+        $('[id^=buttonParametersId').each(function() {
             $(this).css('background-color', 'white');
         });
         $(this).css('background-color', 'gold');
-        
+
         $.each(model.Parameters, function(ind, obj) {
             if (obj.Id == parametersId) {
                 $('#textareaParametersId').text(obj.StringView);
@@ -92,25 +94,25 @@
         });
     });
 
-    $('[id^=buttonDistMatrixId').click(function (e) {
+    $('[id^=buttonDistMatrixId').click(function(e) {
         e.preventDefault();
         distMatrixId = $(this).attr('id').substring(18, $(this).attr('id').length);
-        $('[id^=buttonDistMatrixId').each(function () {
+        $('[id^=buttonDistMatrixId').each(function() {
             $(this).css('background-color', 'white');
         });
         $(this).css('background-color', 'gold');
 
-        $.each(model.DistMatrices, function (ind, obj) {
+        $.each(model.DistMatrices, function(ind, obj) {
             if (obj.Id == distMatrixId) {
                 $('#textareaDistMatrixId').text(obj.MatrixView);
             }
         });
     });
 
-    $('[id^=buttonFlowMatrixId').click(function (e) {
+    $('[id^=buttonFlowMatrixId').click(function(e) {
         e.preventDefault();
         flowMatrixId = $(this).attr('id').substring(18, $(this).attr('id').length);
-        $('[id^=buttonFlowMatrixId').each(function () {
+        $('[id^=buttonFlowMatrixId').each(function() {
             $(this).css('background-color', 'white');
         });
         $(this).css('background-color', 'gold');
@@ -129,11 +131,34 @@
             type: "POST",
             url: '@Url.Action("ProcessChoosenItems", "Home")',
             traditional: true,
-            data: { parametersId: parametersId,
+            data: {
+                parametersId: parametersId,
+                distMatrixId: distMatrixId,
+                flowMatrixId: flowMatrixId
+                },
+                success: function(data) {
+                    $('#textareaResultId').text(data);
+                },
+                error: function(data) {
+                    alert('Error: ' + data);
+                }
+            });
+    });
+
+    $('#get').click(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetAllById", "Home")',
+            traditional: true,
+            data: {
+                parametersId: parametersId,
                 distMatrixId: distMatrixId,
                 flowMatrixId: flowMatrixId,
-                type: $('#selectTypeId').find(":selected").text() },
-            success: function(data) {
+                type: $('#selectTypeId').find(":selected").text()
+            },
+            success: function (data) {
                 $('#textareaResultId').text(data);
             },
             error: function (data) {
@@ -141,5 +166,4 @@
             }
         });
     });
-
 </script>

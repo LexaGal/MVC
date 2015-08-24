@@ -17,7 +17,7 @@ namespace Algorithm.Unity
 {
     public class Bootstrapper
     {
-        public static IUnityContainer Initialise()
+        public static IUnityContainer Initialize()
         {
             var container = BuildUnityContainer();
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));

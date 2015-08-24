@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Algorithm.AOPAttributes;
+using Algorithm.Authentication;
+using Algorithm.Converter;
 using Algorithm.DomainModels;
 using Algorithm.HelpMethods;
 using Algorithm.Models;
@@ -15,6 +17,7 @@ using Algorithm.Repository.Abstract;
 using Algorithm.Repository.Concrete;
 using AntsLibrary.Classes;
 using Grsu.Lab.Aoc.Contracts;
+using PostSharp.Extensibility;
 
 namespace Algorithm.Controllers
 {
@@ -26,7 +29,7 @@ namespace Algorithm.Controllers
         private readonly IDistMatricesRepository _distMatricesRepository;
         private readonly IFlowMatricesRepository _flowMatricesRepository;
         private readonly ResultsInfoRepository _resultsInfoRepository;
-       
+
         public HomeController(IAlgorithm algorithm,
             IParametersRepository parametersRepository,
             IDistMatricesRepository distMatricesRepository,
@@ -84,8 +87,8 @@ namespace Algorithm.Controllers
                 if (fileName != null)
                 {
                     AlgorithmCreator creator = new AlgorithmCreator(file.InputStream);
-                    _algorithm = (AntAlgorithm) creator.CreateStandartAlgorithm();
-                    AntAlgorithm algorithm = (AntAlgorithm) _algorithm;
+                    _algorithm = (AntAlgorithm)creator.CreateStandartAlgorithm();
+                    AntAlgorithm algorithm = (AntAlgorithm)_algorithm;
                     Session["algorithm"] = _algorithm;
                     inputParameters = new InputParametersViewModel
                     {
@@ -134,7 +137,7 @@ namespace Algorithm.Controllers
             MemoryStream memoryStream;
             Stream stream;
             FileRepository repository = new FileRepository();
-            
+
             if (model.GetType().GetProperties().Any(p => p.GetValue(model) == null) && name == null)
             {
                 using (memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(repository.GetAll().Values.First())))
@@ -203,7 +206,7 @@ namespace Algorithm.Controllers
 
             Session["algorithm"] = _algorithm;
             GraphViewModel matrix = new GraphViewModel(numAnts);
-            Graph currGraph = ((Graph) ((AntAlgorithm) Session["algorithm"]).Graph);
+            Graph currGraph = ((Graph)((AntAlgorithm)Session["algorithm"]).Graph);
             matrix.DistGraph = Helper.ConvertMatrixToArray(numAnts, currGraph.DistanceMatrix);
             matrix.FlowGraph = Helper.ConvertMatrixToArray(numAnts, currGraph.FlowMatrix);
             return Json(matrix);
@@ -218,17 +221,17 @@ namespace Algorithm.Controllers
                 return new HtmlString(null);
             }
 
-            _algorithm = (AntAlgorithm) Session["algorithm"];
+            _algorithm = (AntAlgorithm)Session["algorithm"];
             AntAlgorithm savedAlgorithm = (AntAlgorithm)AntAlgorithm.DeepObjectClone(_algorithm);
 
-            AntAlgorithm algorithm = (AntAlgorithm) _algorithm;
+            AntAlgorithm algorithm = (AntAlgorithm)_algorithm;
             algorithm.Graph = (Graph)Session["graph"];
             Helper.SetGraphMatrices(algorithm, graph);
-            
+
             algorithm.CurrentIteration = 0;
             algorithm.CurrentIterationNoChanges = 0;
-            algorithm.BestAnt = new Ant {PathCost = int.MaxValue, VisitedNodes = algorithm.Graph.Nodes};
-            
+            algorithm.BestAnt = new Ant { PathCost = int.MaxValue, VisitedNodes = algorithm.Graph.Nodes };
+
             algorithm.Run();
             string result = algorithm.ResultBuilder.ToString();
 
@@ -237,9 +240,15 @@ namespace Algorithm.Controllers
             return new HtmlString(result);
         }
 
-        public HtmlString ProcessChoosenItems(string parametersId, string distMatrixId, string flowMatrixId, string type)
+        public HtmlString GetAllById(string parametersId, string distMatrixId, string flowMatrixId, string type)
         {
-            IList<ResultInfo> infos = _resultsInfoRepository.GetAllById(Convert.ToInt32(parametersId), type);
+            IList<ResultInfo> infos = _resultsInfoRepository.GetAllById(Convert.ToInt32(parametersId),
+                Convert.ToInt32(distMatrixId), Convert.ToInt32(flowMatrixId), type);
+            return new HtmlString(TypeConverter.GetStringView(infos.GetType().FullName, infos));
+        }
+
+        public HtmlString ProcessChoosenItems(string parametersId, string distMatrixId, string flowMatrixId)
+        {
             Parameters parameters = _parametersRepository.Get(Convert.ToInt32(parametersId));
             DistMatrix distMatrix = _distMatricesRepository.Get(Convert.ToInt32(distMatrixId));
             FlowMatrix flowMatrix = _flowMatricesRepository.Get(Convert.ToInt32(flowMatrixId));
@@ -247,13 +256,13 @@ namespace Algorithm.Controllers
             string graph = string.Format("{0}\n{1}\n{2}",
                 parameters.StringView, distMatrix.MatrixView, flowMatrix.MatrixView);
             Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(graph));
-            
+
             AlgorithmCreator creator = new AlgorithmCreator(stream);
             _algorithm = (AntAlgorithm)creator.CreateStandartAlgorithm();
             _algorithm.Run();
-                    
+
             HtmlString result = new HtmlString(((AntAlgorithm)_algorithm).ResultBuilder.ToString());
-            int pathCost = ((Ant) (((AntAlgorithm) _algorithm).BestAnt)).PathCost;
+            int pathCost = ((Ant)(((AntAlgorithm)_algorithm).BestAnt)).PathCost;
 
             ResultInfo resultInfo = new ResultInfo
             {
@@ -289,6 +298,17 @@ namespace Algorithm.Controllers
                 return new HtmlString("Saved");
             }
             return new HtmlString("Not saved");
+        }
+
+        [LogAspect]
+        [AuthentificationAspect(AttributeExclude = true)]
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+            if (filterContext.Exception.GetType() == typeof(AuthenticationException))
+            {
+                Response.RedirectPermanent("~/Auth/LogIn");
+            }
         }
     }
 }
