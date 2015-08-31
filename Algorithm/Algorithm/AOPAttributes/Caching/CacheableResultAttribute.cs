@@ -1,7 +1,7 @@
 ﻿using System;
 using PostSharp.Aspects;
 
-namespace Algorithm.AOPAttributes.Caching
+namespace Algorithm.AopAttributes.Caching
 {
     [Serializable]
     public class CacheableResultAttribute : MethodInterceptionAspect

@@ -21,45 +21,49 @@ namespace Algorithm.Models
             FlowGraph = new int[n];
         }
 
-        public override string ToString()
+        public string StringView
         {
-            StringBuilder builder = new StringBuilder();
-
-            if (InputParameters != null)
+            get
             {
-                builder.AppendFormat("Pheromone Increment:\n{0}\nExtra Pheromone Increment:\n{1}\n" +
-                                     "Number of Ants:\n{2}\nNo Updates Limit:\n{3}\nNumber of Iterations:" +
-                                     "\n{4}\n", InputParameters.PheromoneIncrement, InputParameters.ExtraPheromoneIncrement,
-                    InputParameters.AntsNumber, InputParameters.NoUpdatesLimit, InputParameters.IterationsNumber);
+                StringBuilder builder = new StringBuilder();
 
-                int i = 0;
-                builder.Append("Distances Matrix:\n");
-                foreach (var e in DistGraph.ToList())
+                if (InputParameters != null)
                 {
-                    i++;
-                    if (i%N == 0)
-                    {
-                        builder.Append(e).Append("\r\n");
-                        continue;
-                    }
-                    builder.Append(e).Append('\t');
-                }
+                    builder.AppendFormat("Pheromone Increment:\n{0}\nExtra Pheromone Increment:\n{1}\n" +
+                                         "Number of Ants:\n{2}\nNo Updates Limit:\n{3}\nNumber of Iterations:" +
+                                         "\n{4}\n", InputParameters.PheromoneIncrement,
+                        InputParameters.ExtraPheromoneIncrement,
+                        InputParameters.AntsNumber, InputParameters.NoUpdatesLimit, InputParameters.IterationsNumber);
 
-                i = 0;
-                builder.Append("Flows Matrix:\n");
-                foreach (var e in FlowGraph.ToList())
-                {
-                    i++;
-                    if (i%N == 0)
+                    int i = 0;
+                    builder.Append("Distances Matrix:\n");
+                    foreach (var e in DistGraph.ToList())
                     {
-                        builder.Append(e).Append("\r\n");
-                        continue;
+                        i++;
+                        if (i%N == 0)
+                        {
+                            builder.Append(e).Append("\r\n");
+                            continue;
+                        }
+                        builder.Append(e).Append('\t');
                     }
-                    builder.Append(e).Append('\t');
+
+                    i = 0;
+                    builder.Append("Flows Matrix:\n");
+                    foreach (var e in FlowGraph.ToList())
+                    {
+                        i++;
+                        if (i%N == 0)
+                        {
+                            builder.Append(e).Append("\r\n");
+                            continue;
+                        }
+                        builder.Append(e).Append('\t');
+                    }
+                    return builder.ToString();
                 }
-                return builder.ToString();
+                return String.Empty;
             }
-            return String.Empty ;
         }
     }
 }

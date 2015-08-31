@@ -1,80 +1,18 @@
-﻿@model Algorithm.Models.InputParametersViewModel
-<script src="~/Scripts/jquery-1.8.2.min.js"></script>
-<script src="~/Scripts/Custom/Functions.js"></script>
+﻿@model dynamic
 
-<form action="@Url.Action("LoadFile", "Home")" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" id="file"/>
-    <input type="submit"/>
-</form>
-
-@using (Html.BeginForm("InputMatrix", "Home", FormMethod.Post, new { id = "inputParametersFormId" }))
-{
-    Html.AntiForgeryToken();
-    Html.ValidationSummary();        
-    <div>
-        @Html.LabelFor(m => m.PheromoneIncrement)
-        @Html.TextBoxFor(m => m.PheromoneIncrement, new {value = "1"})
-    </div>
-    <div>
-        @Html.LabelFor(m => m.ExtraPheromoneIncrement)
-        @Html.TextBoxFor(m => m.ExtraPheromoneIncrement, new {value = "2"})
-    </div>
-    <div>
-        @Html.LabelFor(m => m.AntsNumber)
-        @Html.TextBoxFor(m => m.AntsNumber, new {value = "5"})
-    </div>
-        @Html.LabelFor(m => m.NoUpdatesLimit)
-        @Html.TextBoxFor(m => m.NoUpdatesLimit, new {value = "50"})
-    <div>
-        @Html.LabelFor(m => m.IterationsNumber)
-        @Html.TextBoxFor(m => m.IterationsNumber, new {value = "100"})
-    </div>
-    <input id="postInputParametersForm" type="button" value="Input"/>
+@{
+    Layout = null;
 }
 
-<button id="processMatrix">Process</button><br/>
-<textarea id="textareaResultId" style="position: absolute; margin: -150px 0 0 1100px" cols="30" rows="35"></textarea>
-<table id='DistTableId'></table>
-<table id='FlowTableId'></table>
+<!DOCTYPE html>
 
-<script type="text/javascript">
-    
-    $(document).ready(function() {
-        $('#postInputParametersForm').click(function(event) {
-            event.preventDefault();
-
-            $.ajax({
-                url: $('#inputParametersFormId').attr('action'),
-                type: $('#inputParametersFormId').attr('method'),
-                data: $('#inputParametersFormId').serialize(),
-                success: function(data) {
-                    createMatrices(data);
-                }
-            });
-        });
-    });
-
-
-    $("#processMatrix").click(function () {
-        var distArray = createArray('Dist');
-        var flowArray = createArray('Flow');
-        var graph = {
-            DistGraph: distArray,
-            FlowGraph: flowArray
-        }
-
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("ProcessMatrix", "Home")',
-            traditional: true,
-            data: graph,
-            success: function(data) {
-                $('#textareaResultId').text(data);
-            },
-            error: function(data) {
-                alert(data);
-            }
-        });
-    });
-</script>
-
+<html>
+<head>
+    <title>title</title>
+</head>
+<body>
+<div>
+      
+</div>
+</body>
+</html>

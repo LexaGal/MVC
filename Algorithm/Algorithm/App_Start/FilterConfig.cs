@@ -1,6 +1,4 @@
-﻿using System.Web;
-using System.Web.Mvc;
-using Algorithm.Authentication;
+﻿using System.Web.Mvc;
 
 namespace Algorithm
 {

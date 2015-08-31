@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Providers.Entities;
-using Algorithm.AOPAttributes;
+﻿using System.Web.Mvc;
 using Algorithm.Authentication;
-using Algorithm.Repository.Abstract;
-using User = Algorithm.Authentication.User;
+using Algorithm.Models;
+using DatabaseAccess.Repository.Abstract;
+using Entities.DatabaseModels;
 
 namespace Algorithm.Controllers
 {
@@ -31,19 +26,19 @@ namespace Algorithm.Controllers
         }
 
         [HttpPost]
-        [LogAspect]
         public ActionResult LogIn(LoginModel loginModel, string returnUrl)
         {
             if (ModelState.IsValid)
             {
-                if ((_authProvider.Authenticate(loginModel.Name, loginModel.Password)) != null)
+                var user = _authProvider.Authenticate(loginModel.Name, loginModel.Password);
+                if (user != null)
                 {
-                    Session["client"] = loginModel;
+                    Session["client"] = user;
                     return Redirect(returnUrl ?? Url.Action("DatabaseItems", "Home"));
                 }
             }
             ModelState.AddModelError("LoginModel", "Пользователя с таким логином и паролем нет");
-            return View(loginModel);
+            return View();
         }
 
         public ActionResult Register()
@@ -53,16 +48,19 @@ namespace Algorithm.Controllers
 
 
         [HttpPost]
-        [LogAspect]
         public ActionResult Register(RegisterModel registerModel, string returnUrl)
         {
             if (ModelState.IsValid)
             {
-                if ((_authProvider.Authenticate(registerModel.Name, registerModel.Password)) != null)
+                var user = _authProvider.Authenticate(registerModel.Name, registerModel.Password);
+                if (user != null)
                 {
                     ModelState.AddModelError("RegisterModel", "Пользователь с таким логином и паролем уже есть");
+                    return View();
                 }
-                _authProvider.Register(registerModel.Name, registerModel.Password);
+                
+                user = _authProvider.Register(registerModel.Name, registerModel.Password);
+                Session["client"] = user;
                 return Redirect(returnUrl ?? Url.Action("DatabaseItems", "Home"));
             }
             return View(registerModel);

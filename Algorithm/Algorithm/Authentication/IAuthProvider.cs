@@ -1,4 +1,6 @@
-﻿namespace Algorithm.Authentication
+﻿using Entities.DatabaseModels;
+
+namespace Algorithm.Authentication
 {
     public interface IAuthProvider
     {

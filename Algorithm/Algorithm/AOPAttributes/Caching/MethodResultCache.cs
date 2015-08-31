@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Caching;
 
-namespace Algorithm.AOPAttributes.Caching
+namespace Algorithm.AopAttributes.Caching
 {
     public class MethodResultCache
     {

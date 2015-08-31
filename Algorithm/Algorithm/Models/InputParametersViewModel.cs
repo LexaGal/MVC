@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
+﻿using System.Text;
 
 namespace Algorithm.Models
 {
@@ -14,14 +10,17 @@ namespace Algorithm.Models
         public string NoUpdatesLimit { get; set; }
         public string IterationsNumber { get; set; }
 
-        public override string ToString()
+        public string StringView
         {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendFormat("Pheromone Increment: {0}, Extra Pheromone Increment: {1}, " +
-                                 "Number of Ants: {2}, No Updates Limit: {3}, Number of Iterations:" +
-                                 " {4} ", PheromoneIncrement, ExtraPheromoneIncrement,
-                                 AntsNumber, NoUpdatesLimit, IterationsNumber);
-            return builder.ToString(); 
+            get
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.AppendFormat("Pheromone Increment: {0}, Extra Pheromone Increment: {1}, " +
+                                     "Number of Ants: {2}, No Updates Limit: {3}, Number of Iterations:" +
+                                     " {4} ", PheromoneIncrement, ExtraPheromoneIncrement,
+                    AntsNumber, NoUpdatesLimit, IterationsNumber);
+                return builder.ToString();
+            }
         }
     }
 }

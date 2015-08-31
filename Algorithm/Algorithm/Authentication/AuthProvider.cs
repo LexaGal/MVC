@@ -1,13 +1,8 @@
 ﻿using System.Configuration;
 using System.Linq;
-using System.Net.Http;
 using System.Web;
-using System.Web.Providers.Entities;
-using System.Web.Security;
-using Algorithm.AOPAttributes;
-using Algorithm.Repository.Abstract;
-using Algorithm.Repository.Concrete;
-using Algorithm.Unity;
+using DatabaseAccess.Repository.Abstract;
+using Entities.DatabaseModels;
 
 namespace Algorithm.Authentication
 {
@@ -36,7 +31,6 @@ namespace Algorithm.Authentication
         public User Register(string username, string password)
         {
             User user = new User(username, _cryptor.Encrypt(password));
-            HttpContext.Current.Session["client"] = user;
             _usersRepository.Add(user);
             return user;    
         }

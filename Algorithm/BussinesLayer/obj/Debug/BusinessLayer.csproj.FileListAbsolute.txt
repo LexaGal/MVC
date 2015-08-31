@@ -1,0 +1,3 @@
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\BussinesLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\BussinesLayer\obj\Debug\BussinesLayer.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\BussinesLayer\obj\Debug\BussinesLayer.pdb

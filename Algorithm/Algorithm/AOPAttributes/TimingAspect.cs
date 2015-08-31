@@ -3,7 +3,7 @@ using System.Diagnostics;
 using PostSharp.Aspects;
 using PostSharp.Extensibility;
 
-namespace Algorithm.AOPAttributes
+namespace Algorithm.AopAttributes
 {
     [Serializable]
     [MulticastAttributeUsage(MulticastTargets.Method)]

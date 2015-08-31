@@ -2,13 +2,12 @@
 using System.Diagnostics;
 using System.Text;
 using System.Web.Mvc;
-using Algorithm.AOPAttributes.Caching;
+using Algorithm.AopAttributes.Caching;
 using Algorithm.Authentication;
-using Algorithm.Converter;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
 
-namespace Algorithm.AOPAttributes
+namespace Algorithm.AopAttributes
 {
     [Serializable]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(CacheableResultAttribute))]

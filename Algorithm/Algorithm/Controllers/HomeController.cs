@@ -1,67 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
-using Algorithm.AOPAttributes;
 using Algorithm.Authentication;
-using Algorithm.Converter;
-using Algorithm.DomainModels;
-using Algorithm.HelpMethods;
 using Algorithm.Models;
-using Algorithm.Repository.Abstract;
-using Algorithm.Repository.Concrete;
-using AntsLibrary.Classes;
-using Grsu.Lab.Aoc.Contracts;
-using PostSharp.Extensibility;
+using AntsAlg.AntsAlgorithm.Algorithm;
+using AntsAlg.QapAlg;
+using Aop.AopAspects;
+using Aop.AopAspects.Logging;
+using DatabaseAccess.Repository.Abstract;
+using Entities.DatabaseModels;
+using Path = System.IO.Path;
 
 namespace Algorithm.Controllers
 {
     [AuthentificationAspect]
     public class HomeController : Controller
     {
-        private IAlgorithm _algorithm;
+        private QapAntAlgorithm _qapAntAlgorithm;
+        private readonly StandartAlgorithmBuilder _standartAlgorithmBuilder;
         private readonly IParametersRepository _parametersRepository;
         private readonly IDistMatricesRepository _distMatricesRepository;
         private readonly IFlowMatricesRepository _flowMatricesRepository;
-        private readonly ResultsInfoRepository _resultsInfoRepository;
+        private readonly IResultsInfoRepository _resultsInfoRepository;
 
-        public HomeController(IAlgorithm algorithm,
+        public HomeController(StandartAlgorithmBuilder algorithmBuilder,
             IParametersRepository parametersRepository,
             IDistMatricesRepository distMatricesRepository,
             IFlowMatricesRepository flowMatricesRepository,
-            ResultsInfoRepository resultsInfoRepository)
+            IResultsInfoRepository resultsInfoRepository)
         {
-            _algorithm = algorithm;
+            _standartAlgorithmBuilder = algorithmBuilder;
             _flowMatricesRepository = flowMatricesRepository;
             _distMatricesRepository = distMatricesRepository;
             _parametersRepository = parametersRepository;
             _resultsInfoRepository = resultsInfoRepository;
-        }
-
-
-        public ActionResult Index(InputParametersViewModel inputParameters)
-        {
-            if (inputParameters == null)
-            {
-                return View(new InputParametersViewModel());
-            }
-            return View(inputParameters);
-        }
-
-        public ActionResult DatabasePage(GraphViewModel graphViewModel)
-        {
-            if (graphViewModel == null)
-            {
-                return View(new GraphViewModel());
-            }
-            return View(graphViewModel);
-        }
-
+        }    
+     
         public ActionResult DatabaseItems(DatabaseViewModel databaseViewModel)
         {
             if (databaseViewModel.GetType().GetProperties().Any(p => p.GetValue(databaseViewModel) == null))
@@ -86,159 +64,49 @@ namespace Algorithm.Controllers
                 var fileName = Path.GetFileName(file.FileName);
                 if (fileName != null)
                 {
-                    AlgorithmCreator creator = new AlgorithmCreator(file.InputStream);
-                    _algorithm = (AntAlgorithm)creator.CreateStandartAlgorithm();
-                    AntAlgorithm algorithm = (AntAlgorithm)_algorithm;
-                    Session["algorithm"] = _algorithm;
+                    _qapAntAlgorithm = (QapAntAlgorithm) _standartAlgorithmBuilder.GetAlgorithm<QapGraph>(1, 1, 100, 50);
+                    _qapAntAlgorithm.Calculate(new QapGraph().Load(file.InputStream, _qapAntAlgorithm.NAnts));
+                    Session["algorithm"] = _qapAntAlgorithm;
                     inputParameters = new InputParametersViewModel
                     {
-                        PheromoneIncrement = algorithm.Pheromone.ToString(),
-                        ExtraPheromoneIncrement = algorithm.ExtraPheromone.ToString(),
-                        AntsNumber = algorithm.Graph.Nodes.Count.ToString(),
-                        NoUpdatesLimit = algorithm.MaxIterationsNoChanges.ToString(),
-                        IterationsNumber = algorithm.MaxIterations.ToString(),
+                        PheromoneIncrement = _qapAntAlgorithm.PheromoneInc.ToString(),
+                        ExtraPheromoneIncrement = _qapAntAlgorithm.ExtraPheromoneInc.ToString(),
+                        AntsNumber = _qapAntAlgorithm.NAnts.ToString(),
+                        NoUpdatesLimit = _qapAntAlgorithm.MaxIterationsNoChanges.ToString(),
+                        IterationsNumber = _qapAntAlgorithm.MaxIterations.ToString()
                     };
                 }
             }
             return RedirectToAction("Index", inputParameters);
         }
 
-
-        [HttpPost]
-        public JsonResult GetParameters()
-        {
-            Parameters[] parameters = _parametersRepository.GetAll().ToArray();
-            return Json(new { parameters });
-        }
-
-        [HttpPost]
-        public HtmlString SaveGraph(string graphString, string name)
-        {
-            var jss = new JavaScriptSerializer();
-            GraphViewModel graphViewModel = jss.Deserialize<GraphViewModel>(graphString);
-            //???
-
-            FileRepository repository = new FileRepository();
-            repository.Save(name, graphViewModel.ToString());
-            using (StreamWriter writer = new StreamWriter(ConfigurationManager.AppSettings["Names"]))
-            {
-                writer.BaseStream.Position = writer.BaseStream.Length;
-                writer.WriteLine(name);
-            }
-            return new HtmlString("Saved");
-        }
-
-
-        [HttpPost]
-        public JsonResult InputMatrix(InputParametersViewModel model, string name = null)
-        {
-            int numAnts = 0;
-            AlgorithmCreator creator;
-            MemoryStream memoryStream;
-            Stream stream;
-            FileRepository repository = new FileRepository();
-
-            if (model.GetType().GetProperties().Any(p => p.GetValue(model) == null) && name == null)
-            {
-                using (memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(repository.GetAll().Values.First())))
-                {
-                    using (stream = Stream.Synchronized(memoryStream))
-                    {
-                        creator = new AlgorithmCreator(stream);
-                        _algorithm = creator.CreateStandartAlgorithm();
-                        Session["graph"] = _algorithm.Graph;
-                        numAnts = _algorithm.Graph.Nodes.Count;
-                    }
-                }
-            }
-
-            else if (name != null)
-            {
-                using (memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(repository.Get(name))))
-                {
-                    using (stream = Stream.Synchronized(memoryStream))
-                    {
-                        creator = new AlgorithmCreator(stream);
-                        _algorithm = creator.CreateStandartAlgorithm();
-                        Session["graph"] = _algorithm.Graph;
-                        numAnts = _algorithm.Graph.Nodes.Count;
-                    }
-                }
-            }
-
-            else if (model.GetType().GetProperties().All(p => p.GetValue(model) != null))
-            {
-                int pheromInc;
-                int extraPheromInc;
-                int noUpdatesLim;
-                int numIter;
-                try
-                {
-                    pheromInc = Convert.ToInt32(model.PheromoneIncrement);
-                    extraPheromInc = Convert.ToInt32(model.ExtraPheromoneIncrement);
-                    numAnts = Convert.ToInt32(model.AntsNumber);
-                    noUpdatesLim = Convert.ToInt32(model.NoUpdatesLimit);
-                    numIter = Convert.ToInt32(model.IterationsNumber);
-                }
-                catch (FormatException e)
-                {
-                    return Json(e.Message);
-                }
-
-                using (memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(repository.GetAll().Values.First())))
-                {
-                    using (stream = Stream.Synchronized(memoryStream))
-                    {
-                        creator = new AlgorithmCreator(stream);
-                        _algorithm = creator.CreateStandartAlgorithm();
-                    }
-                }
-
-                Graph graph = new Graph
-                {
-                    Info = new Tuple<int, int, int, int, int>(pheromInc,
-                        extraPheromInc, numAnts, noUpdatesLim, numIter)
-                };
-                graph.SetValues(numAnts);
-                Session["graph"] = graph;
-                numAnts = graph.Nodes.Count;
-            }
-
-            Session["algorithm"] = _algorithm;
-            GraphViewModel matrix = new GraphViewModel(numAnts);
-            Graph currGraph = ((Graph)((AntAlgorithm)Session["algorithm"]).Graph);
-            matrix.DistGraph = Helper.ConvertMatrixToArray(numAnts, currGraph.DistanceMatrix);
-            matrix.FlowGraph = Helper.ConvertMatrixToArray(numAnts, currGraph.FlowMatrix);
-            return Json(matrix);
-        }
-
-
         [HttpPost]
         public HtmlString ProcessMatrix(GraphViewModel graph)
         {
-            if (graph == null || Session["algorithm"] == null || Session["graph"] == null)
+            if (graph == null)
             {
                 return new HtmlString(null);
             }
 
-            _algorithm = (AntAlgorithm)Session["algorithm"];
-            AntAlgorithm savedAlgorithm = (AntAlgorithm)AntAlgorithm.DeepObjectClone(_algorithm);
+            _qapAntAlgorithm = (QapAntAlgorithm) Session["algorithm"];
 
-            AntAlgorithm algorithm = (AntAlgorithm)_algorithm;
-            algorithm.Graph = (Graph)Session["graph"];
-            Helper.SetGraphMatrices(algorithm, graph);
+            QapAntAlgorithm savedAlgorithm = (QapAntAlgorithm) QapAntAlgorithm.DeepObjectClone(_qapAntAlgorithm);
 
-            algorithm.CurrentIteration = 0;
-            algorithm.CurrentIterationNoChanges = 0;
-            algorithm.BestAnt = new Ant { PathCost = int.MaxValue, VisitedNodes = algorithm.Graph.Nodes };
+            if (_qapAntAlgorithm == null)
+            {
+                _qapAntAlgorithm = (QapAntAlgorithm) _standartAlgorithmBuilder.GetAlgorithm<QapGraph>(1, 2, 100, 50);
+            }
 
-            algorithm.Run();
-            string result = algorithm.ResultBuilder.ToString();
+            _qapAntAlgorithm.Graph.SetGraphMatrices(_qapAntAlgorithm.NAnts, graph.DistGraph, graph.FlowGraph);
+            _qapAntAlgorithm.Run();
+
+            string result = _qapAntAlgorithm.Result;
 
             Session["algorithm"] = savedAlgorithm;
 
             return new HtmlString(result);
         }
+    
 
         public HtmlString GetAllById(string parametersId, string distMatrixId, string flowMatrixId, string type)
         {
@@ -253,16 +121,16 @@ namespace Algorithm.Controllers
             DistMatrix distMatrix = _distMatricesRepository.Get(Convert.ToInt32(distMatrixId));
             FlowMatrix flowMatrix = _flowMatricesRepository.Get(Convert.ToInt32(flowMatrixId));
 
-            string graph = string.Format("{0}\n{1}\n{2}",
-                parameters.StringView, distMatrix.MatrixView, flowMatrix.MatrixView);
-            Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(graph));
+            Stream paramStream = new MemoryStream(Encoding.UTF8.GetBytes(parameters.StringView));
+            string graph = string.Format("{0}\n{1}", distMatrix.MatrixView, flowMatrix.MatrixView);
+            Stream graphStream = new MemoryStream(Encoding.UTF8.GetBytes(graph));
 
-            AlgorithmCreator creator = new AlgorithmCreator(stream);
-            _algorithm = (AntAlgorithm)creator.CreateStandartAlgorithm();
-            _algorithm.Run();
+            _qapAntAlgorithm = _standartAlgorithmBuilder.GetAlgorithm<QapGraph>(paramStream);
+            QapGraph qapGraph = new QapGraph().Load(graphStream, _qapAntAlgorithm.NAnts);
+            _qapAntAlgorithm.Calculate(qapGraph);
 
-            HtmlString result = new HtmlString(((AntAlgorithm)_algorithm).ResultBuilder.ToString());
-            int pathCost = ((Ant)(((AntAlgorithm)_algorithm).BestAnt)).PathCost;
+            HtmlString result = new HtmlString(_qapAntAlgorithm.Result);
+            int pathCost = _qapAntAlgorithm.BestAnt.PathCost;
 
             ResultInfo resultInfo = new ResultInfo
             {
@@ -309,6 +177,11 @@ namespace Algorithm.Controllers
             {
                 Response.RedirectPermanent("~/Auth/LogIn");
             }
+        }
+
+        public ActionResult Index(InputParametersViewModel inputParametersViewModel)
+        {
+            return View();
         }
     }
 }

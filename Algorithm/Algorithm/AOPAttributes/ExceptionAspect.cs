@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using PostSharp.Aspects;
 
-namespace Algorithm.AOPAttributes
+namespace Algorithm.AopAttributes
 {
     [Serializable]
     public class ExceptionAspect : OnExceptionAspect

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Transactions;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
 
-namespace Algorithm.AOPAttributes
+namespace Algorithm.AopAttributes
 {
     [Serializable]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(LogAspect))]

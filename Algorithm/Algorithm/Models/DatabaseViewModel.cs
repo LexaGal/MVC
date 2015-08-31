@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Algorithm.DomainModels;
+﻿using System.Collections.Generic;
+using Entities.DatabaseModels;
 
 namespace Algorithm.Models
 {

@@ -3,8 +3,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Algorithm.Converter;
 using Algorithm.Unity;
+using Aop.AopAspects.Logging;
 using log4net;
 using log4net.Config;
 
@@ -25,9 +25,8 @@ namespace Algorithm
 
             MvcUnityContainer.Initialize();
             TypeConverter.Initialize();
-            Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-            XmlConfigurator.Configure();
-            
+            Logger.Configure();
+
             DependencyResolver.SetResolver(new UnityDependencyResolver(MvcUnityContainer.Container));
             
             //Initialize IoC container/Unity

@@ -1,0 +1,4 @@
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\ClassLibrary1\bin\Debug\Entities.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\ClassLibrary1\bin\Debug\Entities.pdb
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\ClassLibrary1\obj\Debug\Entities.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\ClassLibrary1\obj\Debug\Entities.pdb

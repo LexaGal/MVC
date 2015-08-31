@@ -1,136 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Symbols xmlns="http://schemas.postsharp.org/2.0/symbols">
-  <Class Class="#1=T:[Algorithm]Algorithm.AOPAttributes.Caching.CacheableResultAttribute">
-    <Instance Declaration="#2=M:[Algorithm]Algorithm.Repository.Concrete.ResultsInfoRepository::GetAllById(System.Int32, System.Int32, System.Int32, System.String)" Id="9cbc785615c831ea">
-      <Target>
-        <JoinPoint Description="#3=Intercepted by OnInvoke" Ordinal="3" />
+  <Class Class="#1=T:[Aop]Aop.AopAspects.AuthentificationAspect">
+    <Instance Declaration="#2=T:[Algorithm]Algorithm.Controllers.HomeController" Id="9cbc78568b4e6fb5">
+      <Target Target="#3=M:[Algorithm]Algorithm.Controllers.HomeController::#ctor(AntsAlg.AntsAlgorithm.Algorithm.StandartAlgorithmBuilder, DatabaseAccess.Repository.Abstract.IParametersRepository, DatabaseAccess.Repository.Abstract.IDistMatricesRepository, DatabaseAccess.Repository.Abstract.IFlowMatricesRepository, DatabaseAccess.Repository.Abstract.IResultsInfoRepository)">
+        <JoinPoint Advising="#1" Description="#4=Wrapped by advice(s) OnEntry" />
+      </Target>
+      <Target Target="#5=M:[Algorithm]Algorithm.Controllers.HomeController::DatabaseItems([Algorithm]Algorithm.Models.DatabaseViewModel)">
+        <JoinPoint Advising="#1" Description="#4" />
+      </Target>
+      <Target Target="#6=M:[Algorithm]Algorithm.Controllers.HomeController::LoadFile(System.Web.HttpPostedFileBase)">
+        <JoinPoint Advising="#1" Description="#4" />
+      </Target>
+      <Target Target="#7=M:[Algorithm]Algorithm.Controllers.HomeController::ProcessMatrix([Algorithm]Algorithm.Models.GraphViewModel)">
+        <JoinPoint Advising="#1" Description="#4" />
+      </Target>
+      <Target Target="#8=M:[Algorithm]Algorithm.Controllers.HomeController::GetAllById(System.String, System.String, System.String, System.String)">
+        <JoinPoint Advising="#1" Description="#4" />
+      </Target>
+      <Target Target="#9=M:[Algorithm]Algorithm.Controllers.HomeController::ProcessChoosenItems(System.String, System.String, System.String)">
+        <JoinPoint Advising="#1" Description="#4" />
+      </Target>
+      <Target Target="#10=M:[Algorithm]Algorithm.Controllers.HomeController::SaveChoosenItem(System.String, System.String)">
+        <JoinPoint Advising="#1" Description="#4" />
+      </Target>
+      <Target Target="#11=M:[Algorithm]Algorithm.Controllers.HomeController::Index([Algorithm]Algorithm.Models.InputParametersViewModel)">
+        <JoinPoint Advising="#1" Description="#4" />
       </Target>
     </Instance>
   </Class>
-  <Class Class="#4=T:[Algorithm]Algorithm.AOPAttributes.AuthentificationAspect">
-    <Instance Declaration="#5=T:[Algorithm]Algorithm.Controllers.HomeController" Id="9cbc78565ed39717">
-      <Target Target="#6=M:[Algorithm]Algorithm.Controllers.HomeController::#ctor(Grsu.Lab.Aoc.Contracts.IAlgorithm, [Algorithm]Algorithm.Repository.Abstract.IParametersRepository, [Algorithm]Algorithm.Repository.Abstract.IDistMatricesRepository, [Algorithm]Algorithm.Repository.Abstract.IFlowMatricesRepository, [Algorithm]Algorithm.Repository.Concrete.ResultsInfoRepository)">
-        <JoinPoint Description="#7=Wrapped by advice(s) OnEntry" />
-      </Target>
-      <Target Target="#8=M:[Algorithm]Algorithm.Controllers.HomeController::Index([Algorithm]Algorithm.Models.InputParametersViewModel)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#9=M:[Algorithm]Algorithm.Controllers.HomeController::DatabasePage([Algorithm]Algorithm.Models.GraphViewModel)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#10=M:[Algorithm]Algorithm.Controllers.HomeController::DatabaseItems([Algorithm]Algorithm.Models.DatabaseViewModel)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#11=M:[Algorithm]Algorithm.Controllers.HomeController::LoadFile(System.Web.HttpPostedFileBase)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#12=M:[Algorithm]Algorithm.Controllers.HomeController::GetParameters()">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#13=M:[Algorithm]Algorithm.Controllers.HomeController::SaveGraph(System.String, System.String)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#14=M:[Algorithm]Algorithm.Controllers.HomeController::InputMatrix([Algorithm]Algorithm.Models.InputParametersViewModel, System.String)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#15=M:[Algorithm]Algorithm.Controllers.HomeController::ProcessMatrix([Algorithm]Algorithm.Models.GraphViewModel)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#16=M:[Algorithm]Algorithm.Controllers.HomeController::GetAllById(System.String, System.String, System.String, System.String)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#17=M:[Algorithm]Algorithm.Controllers.HomeController::ProcessChoosenItems(System.String, System.String, System.String)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#18=M:[Algorithm]Algorithm.Controllers.HomeController::SaveChoosenItem(System.String, System.String)">
-        <JoinPoint Description="#7" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#19=T:[Algorithm]Algorithm.Repository.Concrete.ResultsInfoRepository" Id="9cbc78566ec07b51">
-      <Target Target="#2">
-        <JoinPoint Description="#7" Ordinal="2" />
-      </Target>
-      <Target Target="#20=M:[Algorithm]Algorithm.Repository.Concrete.ResultsInfoRepository::Add([Algorithm]Algorithm.DomainModels.ResultInfo)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#21=M:[Algorithm]Algorithm.Repository.Concrete.ResultsInfoRepository::Edit(System.Int32, [Algorithm]Algorithm.DomainModels.ResultInfo)">
-        <JoinPoint Description="#7" />
-      </Target>
-      <Target Target="#22=M:[Algorithm]Algorithm.Repository.Concrete.ResultsInfoRepository::#ctor()">
-        <JoinPoint Description="#7" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#23=M:[Algorithm]Algorithm.Repository.Concrete.Repository{T}::Add(T)" Id="9cbc78562897c9cd">
+  <Class Class="#12=T:[Aop]Aop.AopAspects.Logging.LogAspect">
+    <Instance Declaration="#13=M:[Algorithm]Algorithm.Controllers.HomeController::OnException(System.Web.Mvc.ExceptionContext)" Id="9cbc785678eb3f2b">
       <Target>
-        <JoinPoint Description="#7" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#24=M:[Algorithm]Algorithm.Repository.Concrete.Repository{T}::Delete(System.Int32)" Id="9cbc78567b91f701">
-      <Target>
-        <JoinPoint Description="#7" />
-      </Target>
-    </Instance>
-  </Class>
-  <Class Class="#25=T:[Algorithm]Algorithm.AOPAttributes.RunInTransactionAspect">
-    <Instance Declaration="#23" Id="9cbc785669b615f9">
-      <Target>
-        <JoinPoint Description="#26=Wrapped by advice(s) OnEntry, OnSuccess, OnException, OnExit" Ordinal="7" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#24" Id="9cbc7856c92af1e2">
-      <Target>
-        <JoinPoint Description="#26" Ordinal="7" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#20" Id="9cbc7856a79a6085">
-      <Target>
-        <JoinPoint Description="#26" Ordinal="7" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#21" Id="9cbc78562bfdf792">
-      <Target>
-        <JoinPoint Description="#26" Ordinal="7" />
-      </Target>
-    </Instance>
-  </Class>
-  <Class Class="#27=T:[Algorithm]Algorithm.AOPAttributes.LogAspect">
-    <Instance Declaration="#19" Id="9cbc7856098ad5ac">
-      <Target Target="#2">
-        <JoinPoint Description="#28=Wrapped by advice(s) OnEntry, OnSuccess, OnException" Ordinal="7" />
-      </Target>
-      <Target Target="#20">
-        <JoinPoint Description="#28" Ordinal="4" />
-      </Target>
-      <Target Target="#21">
-        <JoinPoint Description="#28" Ordinal="4" />
-      </Target>
-      <Target Target="#22">
-        <JoinPoint Description="#28" Ordinal="4" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#29=M:[Algorithm]Algorithm.Controllers.AuthController::LogIn([Algorithm]Algorithm.Authentication.LoginModel, System.String)" Id="9cbc7856e2b15c31">
-      <Target>
-        <JoinPoint Description="#28" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#30=M:[Algorithm]Algorithm.Controllers.AuthController::Register([Algorithm]Algorithm.Authentication.RegisterModel, System.String)" Id="9cbc7856fefca6c3">
-      <Target>
-        <JoinPoint Description="#28" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#31=M:[Algorithm]Algorithm.Controllers.HomeController::OnException(System.Web.Mvc.ExceptionContext)" Id="9cbc7856b85fb0aa">
-      <Target>
-        <JoinPoint Description="#28" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#23" Id="9cbc78562507fa60">
-      <Target>
-        <JoinPoint Description="#28" Ordinal="4" />
-      </Target>
-    </Instance>
-    <Instance Declaration="#24" Id="9cbc7856cd36fc47">
-      <Target>
-        <JoinPoint Description="#28" Ordinal="4" />
+        <JoinPoint Advising="#12" Description="#14=Wrapped by advice(s) OnEntry, OnSuccess, OnException" />
       </Target>
     </Instance>
   </Class>

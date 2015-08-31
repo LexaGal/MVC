@@ -1,34 +1,29 @@
-﻿using Algorithm.Authentication;
-using Algorithm.Repository.Abstract;
-using Algorithm.Repository.Concrete;
-using AntsLibrary.Classes;
-using Grsu.Lab.Aoc.Contracts;
+﻿using System.Collections.Generic;
+using Algorithm.Authentication;
+using AntsAlg.AntsAlgorithm.Algorithm;
+using AntsAlg.AntsAlgorithm.Graph;
+using AntsAlg.QapAlg;
+using DatabaseAccess.Repository.Abstract;
+using DatabaseAccess.Repository.Concrete;
 using Microsoft.Practices.Unity;
-using NHibernate.Event;
 
 namespace Algorithm.Unity
 {
     public static class MvcUnityContainer
     {
-        private static IUnityContainer _container;
-
         public static void Initialize()
         {
-             _container = new UnityContainer();
-            _container.RegisterType<IAlgorithm, AntAlgorithm>();
-            _container.RegisterType<IParametersRepository, ParametersRepository>();
-            _container.RegisterType<IDistMatricesRepository, DistMatricesRepository>();
-            _container.RegisterType<IFlowMatricesRepository, FlowMatricesRepository>();
-            _container.RegisterType<IResultsInfoRepository, ResultsInfoRepository>();
-            _container.RegisterType<IUsersRepository, UsersRepository>();
-            _container.RegisterType<IAuthProvider, AuthProvider>();
-            _container.RegisterType<ICryptor, PasswordCryptor>();
+            Container = new UnityContainer();
+            Container.RegisterType<IAlgorithm<QapGraph, IList<IVertex>> , QapAntAlgorithm>();
+            Container.RegisterType<IParametersRepository, ParametersRepository>();
+            Container.RegisterType<IDistMatricesRepository, DistMatricesRepository>();
+            Container.RegisterType<IFlowMatricesRepository, FlowMatricesRepository>();
+            Container.RegisterType<IResultsInfoRepository, ResultsInfoRepository>();
+            Container.RegisterType<IUsersRepository, UsersRepository>();
+            Container.RegisterType<IAuthProvider, AuthProvider>();
+            Container.RegisterType<ICryptor, PasswordCryptor>();
         }
 
-        public static IUnityContainer Container
-        {
-            get { return _container; }
-            set { _container = value; }
-        }
+        public static IUnityContainer Container { get; set; }
     }
 }

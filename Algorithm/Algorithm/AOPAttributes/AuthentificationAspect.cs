@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 using Algorithm.Authentication;
 using PostSharp.Aspects;
 using PostSharp.Aspects.Dependencies;
 
-namespace Algorithm.AOPAttributes
+namespace Algorithm.AopAttributes
 {
     [Serializable]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof (LogAspect))]

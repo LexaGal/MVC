@@ -1,0 +1,5 @@
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Converter\bin\Debug\Converter.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Converter\bin\Debug\Converter.pdb
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Converter\obj\Debug\Converter.csprojResolveAssemblyReference.cache
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Converter\obj\Debug\Converter.dll
+C:\Users\Alex\Documents\GitHub\MVC\Algorithm\Converter\obj\Debug\Converter.pdb
