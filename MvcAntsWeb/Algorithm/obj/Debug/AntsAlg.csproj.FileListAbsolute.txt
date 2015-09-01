@@ -1,0 +1,5 @@
+c:\users\alex\documents\visual studio 2012\Projects\AntsAlg\AntsAlg\bin\Debug\AntsAlg.dll
+c:\users\alex\documents\visual studio 2012\Projects\AntsAlg\AntsAlg\bin\Debug\AntsAlg.pdb
+c:\users\alex\documents\visual studio 2012\Projects\AntsAlg\AntsAlg\obj\Debug\AntsAlg.dll
+c:\users\alex\documents\visual studio 2012\Projects\AntsAlg\AntsAlg\obj\Debug\AntsAlg.pdb
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\AntsAlg\AntsAlg\obj\Debug\AntsAlg.csprojResolveAssemblyReference.cache

@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abp.Web</name>
+    </assembly>
+    <members>
+        <member name="T:Abp.Web.HttpVerb">
+            <summary>
+            Represents an HTTP verb.
+            </summary>
+        </member>
+        <member name="F:Abp.Web.HttpVerb.Get">
+            <summary>
+            GET
+            </summary>
+        </member>
+        <member name="F:Abp.Web.HttpVerb.Post">
+            <summary>
+            POST
+            </summary>
+        </member>
+        <member name="F:Abp.Web.HttpVerb.Put">
+            <summary>
+            PUT
+            </summary>
+        </member>
+        <member name="F:Abp.Web.HttpVerb.Delete">
+            <summary>
+            DELETE
+            </summary>
+        </member>
+        <member name="T:Abp.Web.Localization.AbpWebLocalizedMessages">
+            <summary>
+            This class is used to simplify getting localized messages in this assembly.
+            </summary>
+        </member>
+        <member name="T:Abp.Web.Models.AbpAjaxResponse">
+            <summary>
+            This class is used to create standard responses for ajax requests.
+            </summary>
+        </member>
+        <member name="M:Abp.Web.Models.AbpAjaxResponse.#ctor">
+            <summary>
+            Creates an <see cref="T:Abp.Web.Models.AbpAjaxResponse"/> object.
+            <see cref="P:Abp.Web.Models.AbpAjaxResponse.Success"/> is set as true.
+            </summary>
+        </member>
+        <member name="M:Abp.Web.Models.AbpAjaxResponse.#ctor(System.Boolean)">
+            <summary>
+            Creates an <see cref="T:Abp.Web.Models.AbpAjaxResponse"/> object with <see cref="P:Abp.Web.Models.AbpAjaxResponse.Success"/> specified.
+            </summary>
+            <param name="success">Indicates success status of the result</param>
+        </member>
+        <member name="M:Abp.Web.Models.AbpAjaxResponse.#ctor(System.Object)">
+            <summary>
+            Creates an <see cref="T:Abp.Web.Models.AbpAjaxResponse"/> object with <see cref="P:Abp.Web.Models.AbpAjaxResponse.Result"/> specified.
+            <see cref="P:Abp.Web.Models.AbpAjaxResponse.Success"/> is set as true.
+            </summary>
+            <param name="result">The actual result object of ajax request</param>
+        </member>
+        <member name="M:Abp.Web.Models.AbpAjaxResponse.#ctor(Abp.Web.Models.AbpErrorInfo,System.Boolean)">
+            <summary>
+            Creates an <see cref="T:Abp.Web.Models.AbpAjaxResponse"/> object with <see cref="P:Abp.Web.Models.AbpAjaxResponse.Error"/> specified.
+            <see cref="P:Abp.Web.Models.AbpAjaxResponse.Success"/> is set as false.
+            </summary>
+            <param name="error">Error details</param>
+            <param name="unAuthorizedRequest">Used to indicate that the current user has no privilege to perform this request</param>
+        </member>
+        <member name="P:Abp.Web.Models.AbpAjaxResponse.Result">
+            <summary>
+            The actual result object of ajax request.
+            It is set if <see cref="P:Abp.Web.Models.AbpAjaxResponse.Success"/> is true.
+            </summary>
+        </member>
+        <member name="P:Abp.Web.Models.AbpAjaxResponse.Success">
+            <summary>
+            Indicates success status of the result.
+            Set <see cref="P:Abp.Web.Models.AbpAjaxResponse.Error"/> if this value is false.
+            </summary>
+        </member>
+        <member name="P:Abp.Web.Models.AbpAjaxResponse.Error">
+            <summary>
+            Error details (Must and only set if <see cref="P:Abp.Web.Models.AbpAjaxResponse.Success"/> is false).
+            </summary>
+        </member>
+        <member name="P:Abp.Web.Models.AbpAjaxResponse.UnAuthorizedRequest">
+            <summary>
+            This property can be used to indicate that the current user has no privilege to perform this request.
+            </summary>
+        </member>
+        <member name="T:Abp.Web.Models.AbpErrorInfo">
+            <summary>
+            Used to store informations about an error.
+            </summary>
+        </member>
+        <member name="M:Abp.Web.Models.AbpErrorInfo.#ctor">
+            <summary>
+            Creates a new instance of <see cref="T:Abp.Web.Models.AbpErrorInfo"/>.
+            </summary>
+        </member>
+        <member name="M:Abp.Web.Models.AbpErrorInfo.#ctor(System.String)">
+            <summary>
+            Creates a new instance of <see cref="T:Abp.Web.Models.AbpErrorInfo"/>.
+            </summary>
+            <param name="message">Error message</param>
+        </member>
+        <member name="M:Abp.Web.Models.AbpErrorInfo.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new instance of <see cref="T:Abp.Web.Models.AbpErrorInfo"/>.
+            </summary>
+            <param name="message">Error message</param>
+            <param name="details">Error details</param>
+        </member>
+        <member name="M:Abp.Web.Models.AbpErrorInfo.ForException(System.Exception)">
+            <summary>
+            Creates a new instance of <see cref="T:Abp.Web.Models.AbpErrorInfo"/> using given exception object.
+            </summary>
+            <param name="exception">Exception</param>
+            <returns>Created <see cref="T:Abp.Web.Models.AbpErrorInfo"/> object</returns>
+        </member>
+        <member name="P:Abp.Web.Models.AbpErrorInfo.Message">
+            <summary>
+            Error message.
+            </summary>
+        </member>
+        <member name="P:Abp.Web.Models.AbpErrorInfo.Details">
+            <summary>
+            Error details.
+            </summary>
+        </member>
+        <member name="T:Abp.Web.Localization.AbpWebLocalizationSource">
+            <summary>
+            Defines a localization source to get localization strings from XML files.
+            </summary>
+        </member>
+        <member name="M:Abp.Web.Localization.AbpWebLocalizationSource.#ctor">
+            <summary>
+            Constrictor.
+            </summary>
+        </member>
+        <member name="T:Abp.Startup.Web.AbpWebModule">
+            <summary>
+            This module is used to use ABP in ASP.NET web applications.
+            </summary>
+        </member>
+        <member name="T:Abp.Startup.Web.AbpWebApplication">
+            <summary>
+            This class is used to simplify starting of ABP system using <see cref="P:Abp.Startup.Web.AbpWebApplication.AbpBootstrapper"/> class..
+            Inherit from this class in global.asax instead of <see cref="T:System.Web.HttpApplication"/> to be able to start ABP system.
+            </summary>
+        </member>
+        <member name="M:Abp.Startup.Web.AbpWebApplication.Application_Start(System.Object,System.EventArgs)">
+            <summary>
+            This method is called by ASP.NET system on web application's startup.
+            </summary>
+        </member>
+        <member name="M:Abp.Startup.Web.AbpWebApplication.Application_End(System.Object,System.EventArgs)">
+            <summary>
+            This method is called by ASP.NET system on web application's end.
+            </summary>
+        </member>
+        <member name="M:Abp.Startup.Web.AbpWebApplication.Application_AuthenticateRequest(System.Object,System.EventArgs)">
+            <summary>
+            This method is called by ASP.NET system on an authentication request.
+            </summary>
+        </member>
+        <member name="P:Abp.Startup.Web.AbpWebApplication.AbpBootstrapper">
+            <summary>
+            Gets a reference to the <see cref="P:Abp.Startup.Web.AbpWebApplication.AbpBootstrapper"/> instance.
+            </summary>
+        </member>
+    </members>
+</doc>

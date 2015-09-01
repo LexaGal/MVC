@@ -1,5 +1,0 @@
-C:\Users\Alex\Documents\GitHub\MVC\Algorithm\BussinesLayer\bin\Debug\BussinesLayer.dll
-C:\Users\Alex\Documents\GitHub\MVC\Algorithm\BussinesLayer\bin\Debug\BussinesLayer.pdb
-C:\Users\Alex\Documents\GitHub\MVC\Algorithm\BussinesLayer\obj\Debug\BussinesLayer.csprojResolveAssemblyReference.cache
-C:\Users\Alex\Documents\GitHub\MVC\Algorithm\BussinesLayer\obj\Debug\BussinesLayer.dll
-C:\Users\Alex\Documents\GitHub\MVC\Algorithm\BussinesLayer\obj\Debug\BussinesLayer.pdb

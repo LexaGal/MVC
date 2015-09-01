@@ -1,0 +1,10 @@
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\AntsAlg\AntsAlg\obj\Debug\AntsAlg.dll
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\AntsAlg\AntsAlg\bin\Debug\AntsAlg.dll
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\AntsAlg\AntsAlg\bin\Debug\AntsAlg.pdb
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\AntsAlg\AntsAlg\obj\Debug\AntsAlg.pdb
+C:\Users\Alex\Documents\Visual Studio 2012\Projects\AntsAlg\AntsAlg\obj\Debug\Algorithm.csprojResolveAssemblyReference.cache
+C:\Users\Alex\Documents\GitHub\MvcAntsWeb\MvcAntsWeb\Algorithm\bin\Debug\AntsAlg.dll
+C:\Users\Alex\Documents\GitHub\MvcAntsWeb\MvcAntsWeb\Algorithm\bin\Debug\AntsAlg.pdb
+C:\Users\Alex\Documents\GitHub\MvcAntsWeb\MvcAntsWeb\Algorithm\obj\Debug\AntsAlg.dll
+C:\Users\Alex\Documents\GitHub\MvcAntsWeb\MvcAntsWeb\Algorithm\obj\Debug\AntsAlg.pdb
+C:\Users\Alex\Documents\GitHub\MvcAntsWeb\MvcAntsWeb\Algorithm\obj\Debug\Algorithm.csprojResolveAssemblyReference.cache
